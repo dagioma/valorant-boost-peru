@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Boost Rank Valorant — Boost Profesional</title>
+
+<!-- Estilos -->
+<style>
+    option{
+        background-color: brown;
+    }
+  :root{
+    --accent:#ff4655;
+    --card:#151515;
+    --muted:#bfbfbf;
+  }
+  html,body{height:100%; margin:0; font-family:"Segoe UI", Roboto, Arial, sans-serif; color:#fff;}
+  body{
+    background: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/f657721a7eb06acae52a29ad3a951f20c1e5fc60-1920x1080.jpg') no-repeat center center fixed;
+    background-size: cover;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:40px 16px;
+    box-sizing:border-box;
+  }
+
+  .wrap{max-width:1100px; margin:0 auto;}
+
+  header{
+    background: linear-gradient(90deg, rgba(17,17,17,0.94), rgba(13,13,13,0.86));
+    padding:22px;
+    border-radius:12px;
+    border:1px solid rgba(255,70,85,0.08);
+    display:flex;
+    gap:20px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+  }
+  header .title{display:flex; gap:12px; align-items:center;}
+  header h1{font-size:1.5rem; margin:0; color:var(--accent);}
+  header p{margin:0; color:var(--muted); font-size:0.95rem;}
+
+  .card{
+    background: rgba(12,12,12,0.7);
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:18px;
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    overflow:hidden;
+  }
+
+  .grid{display:grid; gap:18px;}
+  .cols{display:grid; grid-template-columns: 1fr 420px; gap:18px;}
+  @media (max-width:980px){ .cols{grid-template-columns:1fr;} }
+
+  .rank-section{
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+    gap:14px;
+  }
+  .rank-box{
+    background: linear-gradient(180deg, rgba(30,30,30,0.9), rgba(18,18,18,0.85));
+    padding:14px;
+    border-radius:10px;
+    text-align:center;
+    border: 1px solid rgba(255,70,85,0.04);
+    transition: transform .28s ease, box-shadow .28s ease;
+    transform: translateY(0);
+    will-change: transform;
+  }
+  .rank-box:hover{ transform: translateY(-6px); box-shadow: 0 10px 26px rgba(0,0,0,0.6); }
+  .rank-box img{ width:78px; display:block; margin:0 auto 8px; }
+  .rank-box p{ margin:0 0 8px; font-weight:600; color:#eee; }
+  .rank-box .sub{ color:var(--muted); font-size:0.85rem; margin-bottom:6px; }
+
+  .btn{
+    background:var(--accent);
+    color:#fff;
+    padding:8px 12px;
+    border-radius:8px;
+    text-decoration:none;
+    display:inline-block;
+    transition: transform .18s ease, background .18s;
+    border:none;
+    font-weight:600;
+    font-size:0.92rem;
+  }
+  .btn:hover{ transform: translateY(-3px); background:#ff6b7a; }
+
+  form label{ display:block; font-weight:700; margin-top:10px; color:#ffd9df; font-size:0.95rem; }
+  form select, form input[type="text"], form textarea{
+    width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02); color:#fff; margin-top:6px; box-sizing:border-box;
+  }
+  .small{ font-size:0.9rem; color:var(--muted); margin-top:6px; }
+
+  .price-table{ display:flex; flex-direction:column; gap:10px; }
+  .price-row{ display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.02); border-radius:8px; }
+  .price-row .meta{ color:var(--muted); font-size:0.9rem; }
+  .price-amount{ font-weight:800; color:var(--accent); font-size:1.05rem; }
+
+  .testimonials{ display:grid; gap:10px; }
+  blockquote{ margin:0; padding:12px; border-left:4px solid var(--accent); background:rgba(0,0,0,0.25); border-radius:6px; color:#eee; font-style:italic; }
+
+  .faq p{ margin:10px 0; color:var(--muted); }
+  .muted{ color:var(--muted); font-size:0.95rem; }
+
+  footer{ text-align:center; color: #bfbfbf; margin-top:18px; font-size:0.9rem; }
+
+  .card, .rank-box, .price-row { opacity:0; transform: translateY(18px); animation:appear .6s ease forwards; }
+  .card:nth-child(1){ animation-delay:0.05s; } .card:nth-child(2){ animation-delay:0.08s; }
+  .rank-box{ animation-delay: .12s; }
+  @keyframes appear { to { opacity:1; transform: translateY(0); } }
+
+  .btn-ghost{ background:transparent; border:1px solid rgba(255,255,255,0.08); color:#fff; padding:8px 12px; border-radius:8px; text-decoration:none; display:inline-block; }
+  .center{text-align:center;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- header -->
+    <header>
+      <div class="title">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));">
+          <rect width="24" height="24" rx="6" fill="#111"/>
+          <path d="M6 4.5L18 12L6 19.5V4.5Z" fill="#ff4655"/>
+        </svg>
+        <div>
+          <h1>Boost Rank Valorant</h1>
+          <p class="muted">Sube de rango de forma profesional, rápida y segura</p>
+        </div>
+      </div>
+
+      <div class="right muted">
+        <div style="text-align:right;">
+          <div style="font-weight:700; color:#fff">Contacto</div>
+          <div style="font-size:0.95rem">
+            WhatsApp: <strong>+51 902 156 145</strong><br>
+            Discord: <strong>dagioma</strong>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- contenido -->
+    <main class="grid">
+      <div class="cols">
+
+        <!-- izquierda: rangos / info -->
+        <div>
+
+          <!-- ¿Qué ofrecemos? -->
+          <section class="card">
+            <h2>¿Qué ofrecemos?</h2>
+            <p class="muted">Servicio profesional de boosting para Valorant. Nuestro equipo está formado por jugadores con experiencia y alto rendimiento. Brindamos confidencialidad, soporte durante el proceso y comunicación constante.</p>
+          </section>
+
+          <!-- rangos -->
+          <section class="card">
+            <h2>Selecciona tu rango actual</h2>
+            <div class="rank-section" id="ranks">
+              <!-- Rango boxes (BRONCE → DIAMANTE) se mantienen igual con sus URLs intactas -->
+              <!-- BRONCE -->
+              <div class="rank-box">
+                <img src="https://i.blogs.es/d8f84b/bronze_3_rank/450_1000.png" alt="Bronce">
+                <p>Bronce</p>
+                <div class="sub">Precio base: <strong>5 soles</strong></div>
+                <a class="btn" href="https://api.whatsapp.com/send?phone=51902156145&text=Hola%2C%20me%20interesa%20el%20servicio%20de%20boost.%20Mi%20rango%20actual%20es%3A%20Bronce.%20Quisiera%20subir%20hasta%3A%20%5Bcolocar%20rango%20deseado%5D.%20Modalidad%3A%20%5Bduo%20%2F%20account%5D." target="_blank" rel="noopener">Cotizar</a>
+              </div>
+
+              <!-- PLATA -->
+              <div class="rank-box">
+                <img src="https://i.blogs.es/a52365/silver_3_rank/450_1000.png" alt="Plata">
+                <p>Plata</p>
+                <div class="sub">Precio base: <strong>10 soles</strong></div>
+                <a class="btn" href="https://api.whatsapp.com/send?phone=51902156145&text=Hola%2C%20me%20interesa%20el%20servicio%20de%20boost.%20Mi%20rango%20actual%20es%3A%20Plata.%20Quisiera%20subir%20hasta%3A%20%5Bcolocar%20rango%20deseado%5D.%20Modalidad%3A%20%5Bduo%20%2F%20account%5D." target="_blank" rel="noopener">Cotizar</a>
+              </div>
+
+              <!-- ORO -->
+              <div class="rank-box">
+                <img src="https://i.blogs.es/e72057/gold_3_rank/450_1000.png" alt="Oro">
+                <p>Oro</p>
+                <div class="sub">Precio base: <strong>15 soles</strong></div>
+                <a class="btn" href="https://api.whatsapp.com/send?phone=51902156145&text=Hola%2C%20me%20interesa%20el%20servicio%20de%20boost.%20Mi%20rango%20actual%20es%3A%20Oro.%20Quisiera%20subir%20hasta%3A%20%5Bcolocar%20rango%20deseado%5D.%20Modalidad%3A%20%5Bduo%20%2F%20account%5D." target="_blank" rel="noopener">Cotizar</a>
+              </div>
+
+              <!-- PLATINO -->
+              <div class="rank-box">
+                <img src="https://i.blogs.es/e99fa0/platinum_3_rank/450_1000.png" alt="Platino">
+                <p>Platino</p>
+                <div class="sub">Precio base: <strong>25 soles</strong></div>
+                <a class="btn" href="https://api.whatsapp.com/send?phone=51902156145&text=Hola%2C%20me%20interesa%20el%20servicio%20de%20boost.%20Mi%20rango%20actual%20es%3A%20Platino.%20Quisiera%20subir%20hasta%3A%20%5Bcolocar%20rango%20deseado%5D.%20Modalidad%3A%20%5Bduo%20%2F%20account%5D." target="_blank" rel="noopener">Cotizar</a>
+              </div>
+
+              <!-- DIAMANTE -->
+              <div class="rank-box">
+                <img src="https://i.blogs.es/80a69b/diamond_3_rank/450_1000.png" alt="Diamante">
+                <p>Diamante</p>
+                <div class="sub">Precio base: <strong>40 soles</strong></div>
+                <a class="btn" href="https://api.whatsapp.com/send?phone=51902156145&text=Hola%2C%20me%20interesa%20el%20servicio%20de%20boost.%20Mi%20rango%20actual%20es%3A%20Diamante.%20Quisiera%20subir%20hasta%3A%20%5Bcolocar%20rango%20deseado%5D.%20Modalidad%3A%20%5Bduo%20%2F%20account%5D." target="_blank" rel="noopener">Cotizar</a>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- precios / detalles -->
+          <section class="card">
+            <h2>Precios y detalles</h2>
+            <div class="price-table">
+              <div class="price-row">
+                <div>
+                  <div><strong>Bronce → Plata</strong></div>
+                  <div class="meta">Ejemplo: desde Bronce hasta Plata — Incluye soporte por WhatsApp y reporte final.</div>
+                </div>
+                <div class="price-amount">5 - 10 S/</div>
+              </div>
+
+              <div class="price-row">
+                <div>
+                  <div><strong>Plata → Oro</strong></div>
+                  <div class="meta">Trabajo por sesiones con actualizaciones diarias (si aplica).</div>
+                </div>
+                <div class="price-amount">10 - 15 S/</div>
+              </div>
+
+              <div class="price-row">
+                <div>
+                  <div><strong>Oro → Platino</strong></div>
+                  <div class="meta">Posible mayor tiempo según mmr. Comunicación constante.</div>
+                </div>
+                <div class="price-amount">15 - 25 S/</div>
+              </div>
+
+              <div class="price-row">
+                <div>
+                  <div><strong>Platino → Diamante</strong></div>
+                  <div class="meta">Requiere estrategia y jugadores de alto rendimiento.</div>
+                </div>
+                <div class="price-amount">25 - 40 S/</div>
+              </div>
+
+              <div class="price-row">
+                <div>
+                  <div><strong>Diamante → Superior</strong></div>
+                  <div class="meta">Cotización personalizada según objetivo.</div>
+                </div>
+                <div class="price-amount">Cotizar</div>
+              </div>
+            </div>
+
+            <p class="muted" style="margin-top:12px;">* Los precios indicados son orientativos. El precio final depende del número de divisiones/rangos a subir, modalidad (duo / account share) y disponibilidad.</p>
+          </section>
+
+          <!-- testimonios -->
+          <section class="card">
+            <h2>Testimonios</h2>
+            <div class="testimonials">
+              <blockquote>“Excelente servicio, subí a Platino en 3 días. Comunicación clara y segura.” — <strong>Jhon P.</strong></blockquote>
+              <blockquote>“Muy profesionales. Recomendado 100%.” — <strong>Camila R.</strong></blockquote>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- derecha: formulario -->
+        <aside>
+          <div class="card">
+            <h2>Ordena tu boost</h2>
+            <form id="orderForm" onsubmit="return handleSubmit(event)">
+              <label for="current">Rango actual</label>
+              <select id="current" required>
+                <option value="Hierro">Hierro</option>
+                <option value="Bronce">Bronce</option>
+                <option value="Plata">Plata</option>
+                <option value="Oro">Oro</option>
+                <option value="Platino">Platino</option>
+                <option value="Diamante">Diamante</option>
+              </select>
+
+              <label for="desired">Rango deseado</label>
+              <select id="desired" required>
+                <option value="" disabled selected>Selecciona rango deseado</option>
+                <option>Bronce</option>
+                <option>Plata</option>
+                <option>Oro</option>
+                <option>Platino</option>
+                <option>Diamante</option>
+              </select>
+
+              <label for="mode">Modalidad</label>
+              <select id="mode" required>
+                <option value="Duo">Duo (juego junto al booster)</option>
+                <option value="Account">Account share (compartes la cuenta)</option>
+              </select>
+
+              <label for="notes">Notas / Detalles (opcional)</label>
+              <textarea id="notes" rows="3" placeholder="Ej: disponibilidad, hora, agente preferido..."></textarea>
+
+              <div class="small muted">Tiempo estimado: <strong>hasta 5 días</strong> en promedio, según cantidad de rangos.</div>
+              <footer>
+      © 2025 Boost Rank Valorant — Todos los derechos reservados. Contacto: WhatsApp +51 902 156 145 | Discord: dagioma
+    </footer>
+
+              <div style="margin-top:12px; display:flex; gap:8px;">
+  <button type="submit" class="btn">Solicitar cotización</button>
+  <a class="btn-ghost" href="https://api.whatsapp.com/send?phone=51902156145&text=Hola%2C%20tengo%20una%20consulta%20sobre%20el%20servicio%20de%20boost." target="_blank" rel="noopener">Consultar</a>
+</div>
+
+<script>
+const phone = '51902156145'; // tu número
+
+function encode(text) { return encodeURIComponent(text); }
+
+function handleSubmit(e){
+  e.preventDefault();
+  const current = document.getElementById('current').value;
+  const desired = document.getElementById('desired').value;
+  const mode = document.getElementById('mode').value;
+  const notes = document.getElementById('notes').value.trim();
+
+  if(!current || !desired){
+    alert('Por favor selecciona rango actual y rango deseado.');
+    return false;
+  }
+
+  const baseMsg = `Hola, me interesa el servicio de boost. Mi rango actual es: ${current}. Quisiera subir hasta: ${desired}. Modalidad: ${mode}.`;
+  const fullMsg = notes ? baseMsg + ' Notas: ' + notes : baseMsg;
+
+  const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encode(fullMsg)}`;
+  window.open(url, '_blank');
+  return false;
+}
+</script>
