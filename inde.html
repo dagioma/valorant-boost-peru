@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Interconexiones 360 – CRM & Colaboración</title>
+<link rel="icon" href="https://www.citypng.com/public/uploads/preview/hd-valorant-official-symbol-sign-logo-png-701751694788082d3btqfskcj.png?v=2026060820">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================
+    1. VARIABLES DE COLOR (TEMA OSCURO SUAVE)
+    ========================================= */
+:root {
+  --bg: #18191c;
+  --bg2: #212228;
+  --surface: #212228;
+  --border: #32343e;
+  --border2: #424552;
+  --text: #f1f2f5;
+  --muted: #9ba1b0;
+  --muted2: #6c7182;
+  --p: #3b82f6;
+  --p2: #2563eb;
+  --p3: #60a5fa;
+  --p-glow: rgba(59, 130, 246, 0.2);
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #0ea5e9;
+  --wsp: #25D366;
+  --r: 10px;
+  --r2: 14px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+/* =========================================
+    2. ESTILOS GENERALES
+    ========================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; height: 100%; overflow: hidden; display: flex; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #4a4d5a; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #6c7182; }
+
+/* =========================================
+    3. COMPONENTES (INPUTS Y BOTONES)
+    ========================================= */
+.inp { width: 100%; padding: 13px 15px; background: rgba(0,0,0,0.15); border: 1px solid var(--border2); border-radius: var(--r); color: var(--text); font-size: 14px; outline: none; transition: .2s; font-family: inherit; }
+.inp:focus { border-color: var(--p); background: rgba(0,0,0,0.3); box-shadow: 0 0 0 3px var(--p-glow); }
+.inp::placeholder { color: var(--muted2); }
+select.inp { appearance: auto; cursor: pointer; }
+select.inp option { background: var(--bg2); color: var(--text); }
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; cursor: pointer; }
+
+.btn { width: 100%; padding: 13px; background: var(--p); color: #fff; border: none; border-radius: var(--r); font-weight: 700; font-size: 14px; font-family: inherit; cursor: pointer; transition: .2s; box-shadow: 0 4px 10px var(--p-glow); display: flex; justify-content: center; align-items: center; gap: 8px;}
+.btn:active { transform: scale(0.97); }
+.btn:hover { background: var(--p2); box-shadow: 0 6px 15px var(--p-glow); }
+.btn:disabled { background: var(--border); color: var(--muted2); box-shadow: none; cursor: not-allowed; pointer-events: none; }
+.btn.danger { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); box-shadow: none; }
+.btn.danger:hover { background: var(--danger); color: #fff; }
+.btn.success { background: var(--wsp); box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); color: #fff; border:none; }
+.btn.success:hover { background: #20BA59; box-shadow: 0 6px 15px rgba(37, 211, 102, 0.4); }
+.btn.sm { width: auto; padding: 9px 18px; font-size: 13px; }
+.btn.info-btn { background: rgba(14,165,233,0.1); color: var(--info); border: 1px solid rgba(14,165,233,0.2); box-shadow:none; }
+.btn.info-btn:hover { background: var(--info); color: #fff; }
+
+/* =========================================
+    4. LAYOUT PRINCIPAL (SIDEBAR Y TOPBAR)
+    ========================================= */
+#app { display: flex; height: 100vh; width: 100vw; overflow: hidden; opacity: 0; transition: opacity 0.5s; }
+
+.sidebar { width: 240px; min-width: 240px; display: flex; flex-direction: column; background: var(--surface); border-right: 1px solid var(--border); box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+.sb-header { padding: 18px 14px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.sb-logo { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--p), var(--p3)); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 11px; color: #fff; flex-shrink: 0; box-shadow: 0 2px 6px var(--p-glow); }
+.sb-brand { font-weight: 700; font-size: 14px; line-height: 1.2; }
+.sb-brand span { display: block; font-size: 10px; font-weight: 500; color: var(--muted); margin-top:2px; }
+
+.user-card { margin: 12px 10px; padding: 10px 12px; background: rgba(0,0,0,0.15); border: 1px solid var(--border); border-radius: var(--r); display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s;}
+.user-card:hover { background: rgba(255,255,255,0.05); }
+.user-av { width: 34px; height: 34px; border-radius: 50%; background: var(--border2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0; overflow: hidden; background-size: cover; background-position: center;}
+.user-info { flex: 1; min-width: 0; }
+.user-info strong { display: block; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+.user-info span { font-size: 11px; color: var(--success); font-weight: 600; display:flex; align-items:center; }
+
+.sb-nav { flex: 1; padding: 6px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+.nav-section { font-size: 10px; font-weight: 700; color: var(--muted2); letter-spacing: 1px; padding: 10px 8px 3px; text-transform: uppercase; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 11px; border-radius: var(--r); cursor: pointer; transition: .15s; font-size: 13px; font-weight: 600; color: var(--muted); user-select: none; }
+.nav-item:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+.nav-item.active { background: rgba(59, 130, 246, 0.1); color: var(--p); border-left: 3px solid var(--p); border-radius: 0 var(--r) var(--r) 0; padding-left: 8px;}
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+.sb-footer { padding: 12px; border-top: 1px solid var(--border); }
+
+/* Main Area */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; background: var(--bg); }
+.topbar { height: 60px; min-height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 1px solid var(--border); background: var(--surface); box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 10; }
+.page-title { font-size: 16px; font-weight: 800; color: var(--text); }
+.page-sub { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+.mobile-logout-btn { display: none; background: transparent; border: none; color: var(--danger); cursor: pointer; padding: 8px; border-radius: 8px; transition: 0.2s; }
+.mobile-logout-btn:active { background: rgba(239, 68, 68, 0.1); }
+.mobile-logout-btn svg { width: 20px; height: 20px; }
+
+.content { flex: 1; overflow: hidden; position: relative; }
+.view { display: none; height: 100%; overflow-y: auto; padding: 24px; scroll-behavior: smooth; }
+.view.active { display: block; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* =========================================
+    5. TARJETAS Y ESTADÍSTICAS
+    ========================================= */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; margin: 0 auto 20px auto; max-width: 580px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.card-head { padding: 14px 20px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; text-align: left; background: rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;}
+.card-body { padding: 20px; }
+.field-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block; text-align: left; }
+
+.stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r2); padding: 16px 20px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.stat-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+.stat-value { font-size: 28px; font-weight: 900; line-height: 1; }
+
+.top-cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+
+.chart-select { background: rgba(0,0,0,0.2); border: 1px solid var(--border2); color: var(--text); border-radius: 6px; font-size: 11px; padding: 4px 8px; outline: none; cursor: pointer; font-family: inherit; font-weight: 600; }
+.chart-select:focus { border-color: var(--p); }
+.chart-select option { background: var(--bg2); color: var(--text); }
+
+/* =========================================
+    MI PERFIL (ESTILOS LIMPIOS)
+    ========================================= */
+.profile-editor { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.avatar-preview { width: 100px; height: 100px; border-radius: 50%; background-color: var(--border); border: 3px solid var(--p); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; color: #fff; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;}
+.avatar-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; opacity: 0; transition: 0.2s; }
+.avatar-preview:hover .avatar-overlay { opacity: 1; }
+
+/* =========================================
+    6. GRABADORA Y WSP
+    ========================================= */
+.rec-display { background: rgba(0,0,0,0.15); border: 1px solid var(--border); border-radius: var(--r2); padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.rec-status { font-size: 11px; font-weight: 800; letter-spacing: 1.2px; padding: 4px 14px; border-radius: 20px; background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border2); }
+.rec-status.recording { background: rgba(239,68,68,0.1); color: var(--danger); border-color: rgba(239,68,68,0.2); }
+.rec-status.paused { background: rgba(245,158,11,0.1); color: var(--warning); border-color: rgba(245,158,11,0.2); }
+.rec-time { font-size: 56px; font-weight: 900; font-variant-numeric: tabular-nums; letter-spacing: 1px; line-height: 1; color: var(--text); }
+.waveform { display: flex; align-items: center; gap: 3px; height: 28px; opacity: .2; transition: .3s; }
+.waveform.active { opacity: 1; }
+.wv { width: 4px; border-radius: 2px; background: var(--danger); height: 4px; }
+.waveform.active .wv { animation: wvAnim 0.7s ease infinite alternate; }
+.waveform.active .wv:nth-child(odd) { animation-duration: 0.85s; }
+.waveform.active .wv:nth-child(3n) { animation-duration: 0.55s; }
+@keyframes wvAnim { from { height: 4px; } to { height: 24px; } }
+
+.rec-controls { display: flex; gap: 14px; justify-content: center; align-items: center; width: 100%; }
+.ctrl-btn { width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--border2); background: rgba(255,255,255,0.03); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: .15s; color: var(--text); }
+.ctrl-btn:active { transform: scale(0.93); }
+.ctrl-btn:disabled { opacity: .4; cursor: not-allowed; pointer-events: none; }
+.ctrl-btn svg { width: 22px; height: 22px; }
+.ctrl-btn.rec-btn { background: rgba(239,68,68,0.05); color: var(--danger); border-color: rgba(239,68,68,0.2); }
+.ctrl-btn.rec-btn:hover:not(:disabled) { background: var(--danger); color: #fff; }
+
+.input-grid-wsp { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px; }
+
+/* =========================================
+    7. TABLAS Y AUDITORÍA
+    ========================================= */
+.tag { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
+.tag.purple { background: rgba(147,51,234,0.15); color: #d8b4fe; border: 1px solid rgba(147,51,234,0.3); }
+.tag.blue { background: rgba(37,99,235,0.15); color: #93c5fd; border: 1px solid rgba(37,99,235,0.3); }
+
+.search-bar { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.15); border: 1px solid var(--border2); border-radius: var(--r); padding: 0 16px; margin-bottom: 16px; }
+.search-bar svg { width: 18px; height: 18px; color: var(--muted); flex-shrink: 0; }
+.search-bar input { background: transparent; border: none; color: var(--text); padding: 12px 0; font-size: 14px; outline: none; flex: 1; font-family: inherit; }
+
+.table-wrap { overflow-x: auto; border-radius: 0 0 var(--r2) var(--r2); background: var(--bg2); }
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
+th { background: rgba(0,0,0,0.2); padding: 14px 16px; text-align: left; font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1; }
+td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 500; color: var(--text); }
+tr:hover td { background: rgba(255,255,255,0.03); }
+
+.btn-dl-mini { display: inline-flex; align-items: center; justify-content: center; gap: 4px; background: rgba(22,163,74,0.15); color: #6ee7b7; padding: 6px 12px; border-radius: 8px; font-size: 11px; text-decoration: none; border: 1px solid rgba(22,163,74,0.3); font-weight: 700; cursor: pointer; white-space: nowrap; transition: .2s; }
+.btn-dl-mini:hover { background: rgba(22,163,74,0.25); }
+
+
+/* =========================================
+    8. CHAT MULTIMEDIA Y FEED (ACTUALIZADO)
+    ========================================= */
+.chat-layout { display: flex; flex-direction: column; height: 100%; border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; background: var(--bg2); }
+.chat-room { display: flex; flex-direction: column; height: 100%; width: 100%; }
+.msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; background: var(--bg); }
+.msg { max-width: 85%; display: flex; gap: 10px;}
+.msg.out { align-self: flex-end; flex-direction: row-reverse; }
+.msg.in { align-self: flex-start; }
+.msg-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background-size: cover; background-position: center; background-color: var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;}
+.bubble { padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; box-shadow: 0 1px 2px rgba(0,0,0,0.1); word-break: break-word;}
+.msg.out .bubble { background: var(--p); color: #fff; border-top-right-radius: 4px; }
+.msg.in .bubble { background: var(--surface); border: 1px solid var(--border); border-top-left-radius: 4px; color: var(--text); }
+.msg-meta { font-size: 10px; color: var(--muted2); margin-top: 4px; font-weight: 600; display: flex; justify-content: space-between; gap: 10px;}
+.msg-author { font-weight: 700; margin-bottom: 4px; font-size: 12px; }
+
+.chat-media { max-width: 100%; border-radius: 8px; margin-top: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
+.chat-media:hover { opacity: 0.9; }
+
+.chat-bar { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: rgba(0,0,0,0.2); align-items: center; position: relative;}
+.chat-bar input { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border2); border-radius: var(--r); color: var(--text); padding: 12px 14px; font-size: 14px; outline: none; transition: 0.2s;}
+.chat-bar input:focus { border-color: var(--p); background: rgba(0,0,0,0.5); }
+.action-icon-btn { width: 40px; height: 40px; border-radius: 10px; background: transparent; border: 1px solid transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: .2s; }
+.action-icon-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.send-btn { width: 42px; height: 42px; border-radius: 10px; background: var(--p); border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: .2s; }
+.send-btn:active { transform: scale(0.95); }
+
+/* Quick Emojis */
+.emoji-picker { position: absolute; bottom: 65px; left: 16px; background: var(--surface); border: 1px solid var(--border); padding: 8px; border-radius: 12px; display: none; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 100; flex-wrap: wrap; width: 220px;}
+.emoji-picker.show { display: flex; }
+.emoji-item { font-size: 20px; cursor: pointer; padding: 4px; transition: 0.2s; border-radius: 6px;}
+.emoji-item:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
+
+
+/* =========================================
+    9. EXTRAS (TOAST, NOTIFICACIONES, MOBILE)
+    ========================================= */
+#toast { position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%); background: #f1f2f5; color: #18191c; padding: 12px 24px; border-radius: 40px; font-size: 14px; font-weight: 600; transition: bottom .4s cubic-bezier(.34,1.56,.64,1); z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+#toast.show { bottom: calc(var(--safe-bottom) + 80px); }
+
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); margin-left: auto; flex-shrink: 0; }
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); display: inline-block; box-shadow: 0 0 6px rgba(16,185,129,0.5); }
+.pulse-dot.anim { animation: pulseDot 2s ease infinite; }
+.status-dot-offline { width: 8px; height: 8px; border-radius: 50%; background: var(--muted2); display: inline-block; }
+
+/* Media Queries */
+@media (max-width: 1280px) {
+  .top-cards-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 1024px) {
+  .sidebar { width: 200px; min-width: 200px; } 
+  .stats-row { grid-template-columns: repeat(4, 1fr); } 
+}
+@media (max-width: 767px) {
+  .top-cards-grid { grid-template-columns: 1fr; }
+  
+  .sidebar { 
+    position: fixed; bottom: 0; left: 0; right: 0; width: 100%; flex-direction: row; 
+    height: calc(64px + var(--safe-bottom)); 
+    min-width: 0; border-right: none; border-top: 1px solid var(--border); 
+    z-index: 50; background: var(--surface); padding-bottom: var(--safe-bottom); 
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2); overflow-x: auto;
+  }
+  
+  .sb-header, .user-card, .sb-footer, .nav-section { display: none !important; }
+  .sb-nav { flex-direction: row; justify-content: flex-start; padding: 0; gap: 0; overflow-x: auto; white-space: nowrap; }
+  .nav-item { flex-direction: column; gap: 4px; padding: 10px 4px; font-size: 10px; border-radius: 12px; min-width: 65px; justify-content: center; }
+  .nav-item.active { background: transparent; color: var(--p); border-left: none; border-top: 3px solid var(--p); border-radius: 0; padding-top: 7px; }
+  .nav-item svg { width: 22px; height: 22px; }
+  .notif-dot { display: none; }
+  
+  #app { flex-direction: column; }
+  .main { height: calc(100vh - 64px - var(--safe-bottom)); }
+  
+  .view { padding: 16px; padding-bottom: calc(90px + var(--safe-bottom)); }
+  
+  .topbar { height: 56px; min-height: 56px; padding: 0 20px; padding-top: var(--safe-top); }
+  .mobile-logout-btn { display: block; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .stat-value { font-size: 24px; }
+  .card { max-width: 100%; }
+  .card-body { padding: 16px; }
+  #toast.show { bottom: calc(64px + var(--safe-bottom) + 16px); }
+  
+  #v-chat { padding: 0 !important; height: 100% !important; padding-bottom: calc(64px + var(--safe-bottom)) !important; }
+  .chat-layout { height: 100% !important; border: none; border-radius: 0; }
+  .chat-room { height: 100% !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <aside class="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo">360</div>
+      <div class="sb-brand">Interconexiones<span>Back Office CRM</span></div>
+    </div>
+    
+    <div class="user-card" onclick="goto('profile', document.getElementById('nav-profile'))" title="Editar Mi Perfil">
+      <div class="user-av" id="sb-av-img"><span id="sb-av-letter">-</span></div>
+      <div class="user-info">
+        <strong id="sb-name">Cargando...</strong>
+        <span><span class="pulse-dot anim" style="margin-right:4px;"></span>En línea</span>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="nav-section">Principal</div>
+      <div class="nav-item active" onclick="goto('dashboard',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.5"></rect></svg>
+        <span>Dashboard</span>
+      </div>
+      
+      <!-- NUEVO BOTÓN LLAMADAS ZADARMA -->
+      <div class="nav-item" onclick="goto('call',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+        <span>Llamadas (Zadarma)</span>
+      </div>
+
+      <div class="nav-item" onclick="goto('recorder',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+        <span>Grabadora Manual</span>
+      </div>
+
+      <div class="nav-item" onclick="goto('wsp',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+        <span>Mensaje WSP</span>
+      </div>
+      
+      <div class="nav-item" onclick="goto('history',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+        <span>Audios del Mes</span>
+      </div>
+      
+      <div class="nav-section">Comunidad & Social</div>
+      <div class="nav-item" id="nav-profile" onclick="goto('profile',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+        <span>Mi Perfil</span>
+      </div>
+      
+      <div class="nav-item" onclick="goto('feed',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        <span>Muro</span>
+      </div>
+      
+      <div class="nav-item" onclick="goto('chat',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        <span>Chat Equipo</span>
+        <div class="notif-dot"></div>
+      </div>
+      
+      <div class="nav-item" onclick="goto('music', this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+        <span>Música YT</span>
+      </div>
+
+      <div class="nav-section">Supervisión</div>
+      <div class="nav-item" onclick="window.open('auditor.html', '_blank')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <span>Portal Auditoría</span>
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-left: auto; opacity: 0.5;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+      </div>
+
+    </nav>
+    <div class="sb-footer">
+      <button class="btn danger" onclick="doLogout()" style="font-size:13px;padding:10px;">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="page-title" id="page-title">Dashboard</div>
+        <div class="page-sub" id="page-sub">Resumen operativo</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="text-align:right;display:none;" class="desktop-info" id="desktop-time">
+          <div style="font-size:14px;font-weight:800;" id="clock-time">00:00</div>
+          <div style="font-size:11px;color:var(--muted); font-weight:600;" id="clock-date"></div>
+        </div>
+        <button class="mobile-logout-btn" onclick="doLogout()" title="Cerrar Sesión">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+        </button>
+        <div class="user-av" id="top-av-img" style="width:36px;height:36px;font-size:14px;"><span id="top-av-letter">-</span></div>
+      </div>
+    </header>
+
+    <div class="content">
+      
+      <!-- VISTA 1: DASHBOARD -->
+      <div class="view active" id="v-dashboard">
+        <!-- Dashboard Content intacto -->
+        <div id="admin-alert-banner" style="display:none; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--warning); padding: 12px 18px; border-radius: var(--r2); margin-bottom: 20px; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 600; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+            <span>Aviso del sistema: El Administrador se encuentra activo y conectado en otro lado.</span>
+          </div>
+          <span style="font-size: 11px; background: rgba(245, 158, 11, 0.2); padding: 3px 8px; border-radius: 6px;">Monitoreo Activo</span>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Grabaciones hoy</div><div class="stat-value" id="stat-hoy" style="color:var(--p)">0</div></div>
+          <div class="stat-card"><div class="stat-label">Total histórico</div><div class="stat-value" id="stat-total" style="color:var(--info)">0</div></div>
+          <div class="stat-card"><div class="stat-label">Posts en muro</div><div class="stat-value" id="stat-posts" style="color:var(--success)">0</div></div>
+          <div class="stat-card"><div class="stat-label">Mensajes chat</div><div class="stat-value" id="stat-msgs" style="color:var(--warning)">0</div></div>
+        </div>
+        
+        <div class="top-cards-grid">
+          <div class="card" style="margin:0; width:100%; max-width:100%; display:flex; flex-direction:column;">
+            <div class="card-head" style="text-align:center;">Actividad reciente</div>
+            <div id="dash-activity" style="flex:1; overflow-y:auto;">
+              <div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;font-weight:500;">Cargando…</div>
+            </div>
+          </div>
+          
+          <div class="card" style="margin:0; width:100%; max-width:100%; display:flex; flex-direction:column;">
+            <div class="card-head" style="text-align:center;">Llamadas por Agente (Hoy)</div>
+            <div style="padding:16px; position:relative; height:180px; width:100%;">
+              <canvas id="dailyChart"></canvas>
+            </div>
+            <div id="dash-agent-stats-hoy" style="padding:0 16px 16px;display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+
+          <div class="card" style="margin:0; width:100%; max-width:100%; display:flex; flex-direction:column;">
+            <div class="card-head" style="text-align:center;">Agentes (Estado)</div>
+            <div id="dash-agents" style="padding:16px;display:flex;flex-direction:column;gap:10px; flex:1;">
+              <div style="color:var(--muted);font-size:13px;font-weight:500;">Sincronizando…</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin:0; width:100%; max-width:100%; display:flex; flex-direction:column;">
+            <div class="card-head" style="text-align:center;">Metas Mensuales de Llamadas</div>
+            <div id="dash-metas" style="padding:16px;display:flex;flex-direction:column; gap:8px; flex:1; justify-content:center;">
+              <div style="color:var(--muted);font-size:13px;font-weight:500;text-align:center;">Calculando metas...</div>
+            </div>
+          </div>
+        </div> 
+        
+        <div class="card" style="margin:0; width:100%; max-width:100%; display:flex; flex-direction:column;">
+          <div class="card-head" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Evolución de Llamadas</span>
+            <select id="trend-filter" class="chart-select" onchange="renderDashboardCharts()">
+              <option value="mes" selected>Mensual (Este mes)</option>
+              <option value="total">Total Histórico</option>
+            </select>
+          </div>
+          <div style="padding:16px; position:relative; height:240px; width:100%;">
+            <canvas id="trendChart"></canvas>
+          </div>
+          <div id="dash-agent-stats-trend" style="padding:0 16px 16px; display:flex; flex-wrap:wrap; gap:16px; justify-content:center;"></div>
+        </div>
+      </div>
+
+      <!-- VISTA: LLAMADAS ZADARMA (NUEVO) -->
+      <div class="view" id="v-call">
+        <div class="card" style="max-width: 650px; margin: 0 auto;">
+          <div class="card-head" style="text-align:center;">
+            <span>Teléfono & Grabadora de Contratos</span>
+          </div>
+          <div class="card-body">
+            <!-- Instrucción del Webphone -->
+            <div style="background: rgba(0,0,0,0.15); border: 1px dashed var(--border2); border-radius: var(--r2); padding: 20px; text-align: center; margin-bottom: 24px;">
+              <h4 style="color: var(--text); margin-bottom: 8px;">El Teclado de Zadarma está activo en la esquina inferior derecha.</h4>
+              <p style="color: var(--muted); font-size: 13px;">Usa el widget flotante de Zadarma para realizar la llamada y utiliza esta grabadora especial para guardar el contrato.</p>
+            </div>
+
+            <!-- Grabadora especial para llamadas -->
+            <div class="rec-display">
+              <div class="rec-status" id="call-rec-status">ESPERANDO LLAMADA</div>
+              <div class="rec-time" id="call-rec-time">00:00</div>
+              <div class="waveform" id="call-rec-wave">
+                <div class="wv"></div><div class="wv"></div><div class="wv"></div>
+                <div class="wv"></div><div class="wv"></div><div class="wv"></div><div class="wv"></div>
+              </div>
+            </div>
+            
+            <!-- Checkbox Mix de Audio (Graba Voz Agente + Voz Cliente) -->
+            <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-top: 16px; background: rgba(59,130,246,0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(59,130,246,0.3);">
+              <input type="checkbox" id="record-customer-audio" style="width:16px; height:16px; accent-color: var(--p); cursor:pointer;">
+              <label for="record-customer-audio" style="font-size: 12px; color: var(--p3); font-weight: 700; cursor:pointer;">
+                🎙️ Grabar también la voz del cliente (Mezclador de audio activo)
+              </label>
+            </div>
+            <div style="text-align: center; font-size: 10px; color: var(--muted); margin-top: 6px;">
+              *Si activas esta opción, el navegador te pedirá permiso para grabar la pestaña actual.
+            </div>
+
+            <div class="rec-controls" style="margin-top:24px">
+              <button class="ctrl-btn rec-btn" id="btn-call-rec-start" onclick="startCallRec()" title="Iniciar Grabación de Llamada">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd"></path></svg>
+              </button>
+              <button class="ctrl-btn pause-btn" id="btn-call-rec-pause" onclick="pauseCallRec()" disabled title="Pausar Grabación" style="color:var(--warning); border-color:rgba(245,158,11,0.3); background:rgba(245,158,11,0.05);">
+                <svg id="pause-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+              </button>
+              <button class="ctrl-btn" id="btn-call-rec-stop" style="color:var(--p); border-color:rgba(59,130,246,0.3); background:rgba(59,130,246,0.05);" onclick="stopCallRec()" disabled title="Finalizar Grabación">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"></path></svg>
+              </button>
+            </div>
+
+            <div style="margin-top:20px;display:flex;flex-direction:column;gap:12px;">
+              <div>
+                <label class="field-label">Nombre del audio / Referencia de Contrato</label>
+                <input type="text" id="call-rec-title" class="inp" placeholder="Ej: Contrato_Juan_Perez">
+              </div>
+              <!-- Este botón utilizará showSaveFilePicker para elegir carpeta y subirá a Firebase -->
+              <button class="btn" id="btn-call-rec-save" onclick="saveCallRec()" disabled>Guardar y Subir Contrato a Base de Audios</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA: MI PERFIL -->
+      <div class="view" id="v-profile">
+        <div class="card" style="max-width: 500px; margin: 0 auto;">
+          <div class="card-head">Configurar Mi Perfil</div>
+          <div class="card-body profile-editor">
+            
+            <div class="avatar-preview" id="prof-av-preview" onclick="document.getElementById('prof-img-upload').click()">
+              <span id="prof-av-letter">-</span>
+              <div class="avatar-overlay">Cambiar Foto</div>
+            </div>
+            <!-- Input oculto para subir imagen -->
+            <input type="file" id="prof-img-upload" accept="image/*" style="display: none;" onchange="previewAvatar(event)">
+
+            <div style="width: 100%;">
+              <label class="field-label">Nombre de Usuario (Vinculado a la cuenta)</label>
+              <!-- Bloqueado para que no se pueda editar -->
+              <input type="text" id="prof-name" class="inp" readonly style="opacity:0.7; cursor:not-allowed; border: 1px solid var(--border);" title="El nombre está vinculado a tu cuenta de inicio de sesión y no se puede modificar">
+            </div>
+
+            <button class="btn" id="btn-save-profile" onclick="saveProfile()">
+              <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              Guardar Foto
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA 2: GRABADORA (Manual) -->
+      <div class="view" id="v-recorder">
+        <div class="card">
+          <div class="card-head" style="text-align:center;">Grabadora de Audio Libre</div>
+          <div class="card-body">
+            <div class="rec-display">
+              <div class="rec-status" id="rec-status">ESPERANDO</div>
+              <div class="rec-time" id="rec-time">00:00</div>
+              <div class="waveform" id="rec-wave">
+                <div class="wv"></div><div class="wv"></div><div class="wv"></div>
+                <div class="wv"></div><div class="wv"></div><div class="wv"></div><div class="wv"></div>
+              </div>
+            </div>
+            <div class="rec-controls" style="margin-top:24px">
+              <button class="ctrl-btn rec-btn" id="btn-rec-start" onclick="startRec()" title="Grabar">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd"></path></svg>
+              </button>
+              <button class="ctrl-btn pause-btn" id="btn-rec-pause" onclick="pauseRec()" disabled title="Pausar" style="color:var(--warning); border-color:rgba(245,158,11,0.3); background:rgba(245,158,11,0.05);">
+                <svg id="pause-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+              </button>
+              <button class="ctrl-btn" id="btn-rec-stop" style="color:var(--p); border-color:rgba(59,130,246,0.3); background:rgba(59,130,246,0.05);" onclick="stopRec()" disabled title="Detener">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"></path></svg>
+              </button>
+            </div>
+            <div style="margin-top:20px;display:flex;flex-direction:column;gap:12px;">
+              <div>
+                <label class="field-label">Nombre del audio / Referencia</label>
+                <input type="text" id="rec-title" class="inp" placeholder="Ej: Audio_Prueba_01">
+              </div>
+              <button class="btn" id="btn-rec-save" onclick="saveRec()" disabled>Guardar audio</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA: MENSAJE WSP POST-GRABACIÓN -->
+      <div class="view" id="v-wsp">
+        <div class="card" style="max-width: 750px; margin: 0 auto;">
+          <div class="card-head" style="text-align:center;">Generador Mensaje de WhatsApp (Post-Grabación)</div>
+          <div class="card-body">
+            
+            <div class="input-grid-wsp">
+              <div>
+                <label class="field-label">Nombre del Cliente</label>
+                <input type="text" id="wsp-cliente" class="inp" placeholder="Ej. Juan Pérez">
+              </div>
+              <div>
+                <label class="field-label">Nombre del Asesor</label>
+                <input type="text" id="wsp-asesor" class="inp" placeholder="Ej. Carlos">
+              </div>
+              
+              <div>
+                <label class="field-label">Fecha de Instalación</label>
+                <input type="date" id="wsp-fecha" class="inp">
+              </div>
+              
+              <div>
+                <label class="field-label">Rango de Hora</label>
+                <select id="wsp-hora" class="inp">
+                  <option value="" disabled selected>Selecciona un horario</option>
+                  <option value="8:00 AM a 10:00 AM">8:00 AM a 10:00 AM</option>
+                  <option value="10:00 AM a 12:00 PM">10:00 AM a 12:00 PM</option>
+                  <option value="12:00 PM a 2:00 PM">12:00 PM a 2:00 PM</option>
+                  <option value="2:00 PM a 4:00 PM">2:00 PM a 4:00 PM</option>
+                  <option value="4:00 PM a 6:00 PM">4:00 PM a 6:00 PM</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="field-label">Número de Celular (Coordinación y WSP)</label>
+                <input type="text" id="wsp-celular" class="inp" placeholder="Ej. 999 999 999">
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px;">
+              <label class="field-label">Correo Registrado (Llegarán credenciales o recibos)</label>
+              <input type="email" id="wsp-correo" class="inp" placeholder="correo@ejemplo.com">
+            </div>
+
+            <div style="margin-bottom:20px;">
+              <label class="field-label">Plan WOW Seleccionado</label>
+              <select id="wsp-plan" class="inp" style="margin-bottom: 12px;">
+                <option value="300_solo">300 Mbps (Promo 500 Mbps) Solo Internet - S/ 74.90</option>
+                <option value="300_dgo" selected>300 Mbps (Promo 500 Mbps) + DGO TV - S/ 79.90</option>
+                <option value="500_dgo">500 Mbps (Promo 1000 Mbps) + DGO TV - S/ 84.90</option>
+                <option value="1000_l1max">1000 Mbps + DGO TV + L1 MAX - S/ 94.90</option>
+                <option value="1000_fam">1000 Mbps + DGO FAMILIA + L1 MAX + Prime - S/ 99.90</option>
+                <option value="1000_full">1000 Mbps + DGO FULL + L1 MAX + Prime - S/ 148.90</option>
+              </select>
+
+              <div style="display:flex; align-items:center; gap:10px; padding: 10px; background: rgba(0,0,0,0.15); border: 1px solid var(--border2); border-radius: 8px;">
+                <input type="checkbox" id="wsp-duo" style="width:18px; height:18px; cursor:pointer; accent-color: var(--p);">
+                <label for="wsp-duo" class="field-label" style="margin:0; cursor:pointer; font-size: 13px; color: var(--text);">
+                  Agregar Dúo Telefonía Fija (+ S/ 10 = 1000 minutos a nivel nacional)
+                </label>
+              </div>
+            </div>
+
+            <button class="btn" style="background:var(--p2);" onclick="generarMensajeWsp()">Visualizar Mensaje Abajo</button>
+
+            <div style="margin-top:24px; border-top: 1px solid var(--border); padding-top:20px;">
+              <label class="field-label">Vista Previa del Mensaje</label>
+              <textarea id="wsp-resultado" class="inp" style="min-height: 280px; resize: none; line-height: 1.5; background: rgba(0,0,0,0.25);" readonly placeholder="El mensaje generado aparecerá aquí..."></textarea>
+              
+              <div style="display:flex; justify-content:flex-end; flex-wrap:wrap; gap: 10px; margin-top:16px;">
+                <button class="btn sm danger" onclick="limpiarWsp()" style="margin-right:auto; flex-grow: 1;" title="Limpiar los campos ingresados">🧹 Limpiar</button>
+                <button class="btn sm" onclick="copiarWsp()" style="background:var(--bg2); border:1px solid var(--border2); color:var(--text); flex-grow: 1;">📋 Copiar</button>
+                <button class="btn sm success" onclick="enviarWspDirecto()" style="display:flex; align-items:center; justify-content:center; gap:6px; flex-grow: 2;">
+                  <svg style="width:16px; height:16px" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                  Enviar a WhatsApp
+                </button>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA 3: HISTORIAL -->
+      <div class="view" id="v-history">
+        <div style="max-width:1000px;margin:0 auto;">
+          <div class="search-bar">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="2"></circle><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2"></line></svg>
+            <input type="text" id="hist-search" placeholder="Filtrar audios del mes actual..." oninput="filterHist()">
+          </div>
+          <div class="card" style="max-width:100%;margin:0;border-radius:16px;">
+            <div class="table-wrap">
+              <table>
+                <thead><tr>
+                  <th>Fecha</th>
+                  <th>Referencia/Nombre</th>
+                  <th>Duración</th>
+                  <th>Agente</th>
+                  <th>Audio</th>
+                  <th>Acciones</th>
+                </tr></thead>
+                <tbody id="hist-body">
+                  <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted);font-weight:500;">Cargando registros del mes…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA 4: FEED (MURO ACTUALIZADO) -->
+      <div class="view" id="v-feed">
+        <div style="max-width:600px;margin:0 auto;">
+          <div class="card" style="margin-bottom:20px;">
+            <div style="padding:16px;">
+              <textarea id="feed-text" class="inp" style="min-height:90px; resize:none; line-height:1.5;" placeholder="¿Qué quieres compartir con el equipo?"></textarea>
+              <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+                <button class="btn sm" onclick="publishPost()">Publicar</button>
+              </div>
+            </div>
+          </div>
+          <div id="feed-list"><div style="text-align:center;color:var(--muted);font-size:13px;padding:24px;">Cargando publicaciones…</div></div>
+        </div>
+      </div>
+
+      <!-- VISTA 5: CHAT MULTIMEDIA (MESSENGER CLONE) -->
+      <div class="view" id="v-chat" style="padding:0;height:100%;">
+        <div class="chat-layout">
+          <div class="chat-room">
+            <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:rgba(0,0,0,0.1);">
+              <span class="pulse-dot anim"></span>
+              <div>
+                <div style="font-size:14px;font-weight:800; color:var(--text);">Sala Messenger 360</div>
+                <div id="chat-count" style="font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;">0 mensajes</div>
+              </div>
+            </div>
+            
+            <div class="msgs" id="chat-msgs"></div>
+            
+            <div class="chat-bar">
+              <input type="file" id="chat-media-upload" accept="image/*,video/*,audio/*" style="display:none;" onchange="sendMediaMsg(event)">
+              <button class="action-icon-btn" onclick="document.getElementById('chat-media-upload').click()" title="Enviar Foto/Video">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:22px;height:22px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+              </button>
+              
+              <button class="action-icon-btn" onclick="document.getElementById('emoji-picker').classList.toggle('show')" title="Emojis">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:22px;height:22px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </button>
+
+              <div class="emoji-picker" id="emoji-picker">
+                <span class="emoji-item" onclick="insertEmoji('😀')">😀</span>
+                <span class="emoji-item" onclick="insertEmoji('😂')">😂</span>
+                <span class="emoji-item" onclick="insertEmoji('🥰')">🥰</span>
+                <span class="emoji-item" onclick="insertEmoji('😎')">😎</span>
+                <span class="emoji-item" onclick="insertEmoji('🔥')">🔥</span>
+                <span class="emoji-item" onclick="insertEmoji('👍')">👍</span>
+                <span class="emoji-item" onclick="insertEmoji('🙌')">🙌</span>
+                <span class="emoji-item" onclick="insertEmoji('🚀')">🚀</span>
+                <span class="emoji-item" onclick="insertEmoji('💼')">💼</span>
+                <span class="emoji-item" onclick="insertEmoji('✅')">✅</span>
+              </div>
+
+              <input type="text" id="chat-inp" placeholder="Escribe un mensaje..." onkeypress="if(event.key==='Enter')sendTextMsg()">
+              
+              <button class="send-btn" onclick="sendTextMsg()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px; margin-left:2px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA 6: MÚSICA -->
+      <div class="view" id="v-music">
+        <div class="card" style="max-width: 650px; margin: 0 auto;">
+          <div class="card-head" style="text-align:center;">Buscador de YouTube</div>
+          <div class="card-body">
+            <div class="search-bar" style="margin-bottom: 24px;">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="2"></circle><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2"></line></svg>
+              <input type="text" id="yt-search-input" placeholder="Buscar canciones, artistas, mixes..." onkeypress="if(event.key==='Enter')searchYouTube()">
+              <button class="btn sm info-btn" onclick="searchYouTube()">Buscar</button>
+            </div>
+            <div id="yt-player-wrapper" style="display: none; margin-bottom: 24px; border-radius: var(--r2); overflow: hidden; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+              <iframe id="yt-iframe" width="100%" height="315" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div id="yt-results-list" style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="text-align:center; color:var(--muted); font-size:13px; font-weight:500; padding:24px;">
+                Busca una canción para empezar a escuchar.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div id="toast"><span id="toast-txt">Mensaje</span></div>
+
+<!-- ============================================== -->
+<!-- SCRIPT CON GUARDIÁN DE FIREBASE                -->
+<!-- ============================================== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+
+<script>
+/* global firebase, Chart, MediaRecorder, AudioContext, window */
+
+// ==========================================
+// A. VARIABLES GLOBALES Y CONFIGURACIÓN
+// ==========================================
+var db, storage, auth;
+var CU = null, CUP = {}, histAll = [];
+var dailyChart = null; 
+var trendChart = null; 
+var heartbeatTimer = null; 
+var currentAgents = []; 
+
+// Nuevas variables para Perfiles y Chat
+var myProfile = { name: 'Cargando...', avatarUrl: '' };
+var allProfilesCache = {}; 
+var newAvatarFile = null;
+var currentChatMessages = []; 
+
+const FB_CFG = {
+  apiKey:"AIzaSyDOynPkm0oO12UVCjwOp8592tMJiwXJAz0",
+  authDomain:"crm-telecom-db014.firebaseapp.com",
+  projectId:"crm-telecom-db014",
+  storageBucket:"crm-telecom-db014.firebasestorage.app",
+  messagingSenderId:"92366048720",
+  appId:"1:92366048720:web:f45c610cdb1ed6326d7dd5"
+};
+
+try {
+  if (!firebase.apps.length) firebase.initializeApp(FB_CFG);
+  db = firebase.firestore();
+  storage = firebase.storage();
+  auth = firebase.auth();
+  console.log("✅ Firebase inicializado correctamente");
+} catch(e) {
+  console.error('❌ Error crítico al inicializar Firebase:', e);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  updateClock(); setInterval(updateClock, 30000);
+});
+
+// Ocultar selector de emojis al hacer clic fuera
+document.addEventListener('click', (e) => {
+  if(!e.target.closest('.emoji-picker') && !e.target.closest('.action-icon-btn')) {
+    document.getElementById('emoji-picker').classList.remove('show');
+  }
+});
+
+// ==========================================
+// B. GUARDIÁN DE AUTENTICACIÓN
+// ==========================================
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    CU = { uid: user.uid };
+    
+    // 1. Extraer nombre desde el correo de Firebase de manera inmediata
+    let rawName = user.email ? user.email.split('@')[0] : 'Usuario';
+    let capName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+    
+    myProfile.name = capName;
+    CUP = { name: capName, role: 'Agente BackOffice' };
+    
+    // 2. Aplicar inmediatamente al HTML para evitar que diga "Agente" o "Cargando"
+    applyProfileToDOM();
+    
+    document.getElementById('app').style.opacity = '1';
+    
+    // 3. Cargar caché de todos los perfiles de inmediato
+    db.collection('perfiles').onSnapshot(snap => {
+      snap.forEach(doc => { allProfilesCache[doc.id] = doc.data(); });
+      renderChatMessages(); 
+      renderPresenceUI(); // Re-renderizar presencia para mostrar fotos
+      renderDashboardCharts(); // Re-renderizar dashboard para mostrar fotos
+    });
+
+    // 4. Buscar la foto de perfil en la base de datos
+    await loadMyProfile(user.email, capName);
+    
+    initListeners();
+    updatePresence();
+  } else {
+    document.body.style.display = 'none'; 
+    window.location.replace('login.html'); 
+  }
+});
+
+async function loadMyProfile(email, expectedName) {
+  try {
+    const doc = await db.collection('perfiles').doc(CU.uid).get();
+    if(doc.exists) {
+      let data = doc.data();
+      myProfile.avatarUrl = data.avatarUrl || '';
+      
+      if(data.name !== expectedName) {
+         await db.collection('perfiles').doc(CU.uid).set({ name: expectedName }, {merge: true});
+      }
+    } else {
+      myProfile.avatarUrl = '';
+      await db.collection('perfiles').doc(CU.uid).set({ name: expectedName, avatarUrl: '' });
+    }
+    applyProfileToDOM();
+  } catch(e) { console.error("Error cargando perfil", e); }
+}
+
+function applyProfileToDOM() {
+  document.getElementById('sb-name').textContent = myProfile.name;
+  document.getElementById('wsp-asesor').value = myProfile.name;
+  document.getElementById('prof-name').value = myProfile.name; 
+  
+  const applyAv = (imgId, letId) => {
+    const imgEl = document.getElementById(imgId);
+    if(myProfile.avatarUrl) {
+      imgEl.style.backgroundImage = `url('${myProfile.avatarUrl}')`;
+      document.getElementById(letId).style.display = 'none';
+      imgEl.style.border = `2px solid var(--border)`;
+      imgEl.style.backgroundColor = "transparent";
+    } else {
+      imgEl.style.backgroundImage = 'none';
+      imgEl.style.border = 'none';
+      imgEl.style.backgroundColor = "var(--p)";
+      document.getElementById(letId).style.display = 'flex';
+      document.getElementById(letId).textContent = myProfile.name.charAt(0).toUpperCase();
+    }
+  };
+
+  applyAv('sb-av-img', 'sb-av-letter');
+  applyAv('top-av-img', 'top-av-letter');
+  applyAv('prof-av-preview', 'prof-av-letter');
+}
+
+// ==========================================
+// C. EDICIÓN DE PERFIL (FOTO SOLAMENTE)
+// ==========================================
+function previewAvatar(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  newAvatarFile = file;
+  const url = URL.createObjectURL(file);
+  const prev = document.getElementById('prof-av-preview');
+  prev.style.backgroundImage = `url('${url}')`;
+  document.getElementById('prof-av-letter').style.display = 'none';
+}
+
+async function saveProfile() {
+  const btn = document.getElementById('btn-save-profile');
+
+  if(!newAvatarFile) {
+    showToast("No has seleccionado ninguna foto nueva", "⚠️");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = 'Guardando Foto...';
+
+  try {
+    let finalAvatarUrl = myProfile.avatarUrl;
+    const snap = await storage.ref(`avatars/${CU.uid}_${Date.now()}`).put(newAvatarFile);
+    finalAvatarUrl = await snap.ref.getDownloadURL();
+    
+    myProfile.avatarUrl = finalAvatarUrl;
+    
+    await db.collection('perfiles').doc(CU.uid).set(myProfile, {merge: true});
+
+    applyProfileToDOM();
+    showToast("Foto actualizada correctamente", "✅");
+    newAvatarFile = null;
+
+  } catch(e) {
+    console.error(e);
+    showToast("Error al guardar la foto", "❌");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Guardar Foto';
+  }
+}
+
+async function doLogout() {
+  if(heartbeatTimer) clearInterval(heartbeatTimer); 
+  try { 
+    if(CU) { 
+      await db.collection('presence').doc(CU.uid).update({ online: false, lastSeen: Date.now() }); 
+    }
+    await auth.signOut();
+  } catch(e) { console.error(e); }
+}
+
+function updatePresence() {
+  if(!CU || !CUP) return;
+  const sendHeartbeat = () => {
+    db.collection('presence').doc(CU.uid).set({
+      name: CUP.name,
+      online: true,
+      lastSeen: Date.now() 
+    }, {merge: true});
+  };
+  sendHeartbeat(); 
+  if(heartbeatTimer) clearInterval(heartbeatTimer);
+  heartbeatTimer = setInterval(sendHeartbeat, 30000); 
+}
+
+// ==========================================
+// D. FUNCIONES UTILITARIAS BÁSICAS
+// ==========================================
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2,'0');
+  const m = now.getMinutes().toString().padStart(2,'0');
+  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const tEl = document.getElementById('clock-time');
+  const dEl = document.getElementById('clock-date');
+  if(tEl) tEl.textContent = `${h}:${m}`;
+  if(dEl) dEl.textContent = `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]}`;
+  const di = document.querySelector('.desktop-info');
+  if(di && window.innerWidth >= 768) di.style.display = 'block';
+}
+
+function getDateStr() {
+  const d = new Date();
+  return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+}
+
+const fmtTime = s => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+
+function showToast(msg, icon='') {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-txt').textContent = (icon ? icon + ' ' : '') + msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function goto(viewId, element) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById('v-' + viewId);
+  if(target) target.classList.add('active');
+  
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if(element) element.classList.add('active');
+  
+  const titles = {
+    dashboard: { t:'Dashboard', s:'Resumen operativo' },
+    call:      { t:'Llamadas y Contratos', s:'Teléfono Zadarma y grabación mixta' },
+    recorder:  { t:'Grabadora Manual', s:'Captura de audio libre' },
+    wsp:       { t:'Mensaje WhatsApp', s:'Generador post-grabación' },
+    history:   { t:'Audios del Mes', s:'Audios grabados del mes actual' },
+    feed:      { t:'Muro del Equipo', s:'Anuncios y comunidad' },
+    chat:      { t:'Chat de Equipo', s:'Comunicación interna' },
+    music:     { t:'Reproductor', s:'Música de fondo' },
+    profile:   { t:'Mi Perfil', s:'Ajustes personales' }
+  };
+  
+  if(titles[viewId]) {
+    document.getElementById('page-title').textContent = titles[viewId].t;
+    document.getElementById('page-sub').textContent = titles[viewId].s;
+  }
+}
+
+// ==========================================
+// E. GRABADORAS (MANUAL Y DE LLAMADA ZADARMA)
+// ==========================================
+
+// --- GRABADORA MANUAL (ORIGINAL) ---
+var recMR=null, recChunks=[], recIsOn=false, recPaused=false, recSec=0, recTimer=null, recBlob=null, recDur='';
+
+async function startRec() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    recMR = new MediaRecorder(stream); recChunks = [];
+    recMR.ondataavailable = e => recChunks.push(e.data);
+    recMR.onstop = () => { recBlob = new Blob(recChunks,{type:'audio/webm'}); document.getElementById('btn-rec-save').disabled = false; };
+    recMR.start(); recIsOn=true; recPaused=false; recSec=0;
+    recTimer = setInterval(()=>{ recSec++; document.getElementById('rec-time').textContent=fmtTime(recSec); },1000);
+    setRecUI('recording');
+  } catch(e) { showToast('No se pudo acceder al micrófono','❌'); }
+}
+function pauseRec() {
+  if(!recIsOn) return;
+  if(recPaused) { recMR.resume(); recPaused=false; recTimer=setInterval(()=>{recSec++;document.getElementById('rec-time').textContent=fmtTime(recSec);},1000); setRecUI('recording'); }
+  else { recMR.pause(); recPaused=true; clearInterval(recTimer); setRecUI('paused'); }
+}
+function stopRec() {
+  if(!recIsOn) return;
+  recMR.stop(); recMR.stream.getTracks().forEach(t=>t.stop());
+  clearInterval(recTimer); recDur=document.getElementById('rec-time').textContent;
+  recIsOn=false; recPaused=false; setRecUI('ready');
+}
+function setRecUI(st) {
+  const s=document.getElementById('rec-status'), w=document.getElementById('rec-wave');
+  const r=document.getElementById('btn-rec-start'), p=document.getElementById('btn-rec-pause'), stop=document.getElementById('btn-rec-stop');
+  if(st==='recording'){s.textContent='GRABANDO';s.className='rec-status recording';w.classList.add('active');r.disabled=true;p.disabled=false;stop.disabled=false;}
+  else if(st==='paused'){s.textContent='PAUSADO';s.className='rec-status paused';w.classList.remove('active');}
+  else if(st==='ready'){s.textContent='LISTO';s.className='rec-status';w.classList.remove('active');r.disabled=false;p.disabled=true;stop.disabled=true;}
+  else{s.textContent='ESPERANDO';s.className='rec-status';w.classList.remove('active');r.disabled=false;p.disabled=true;stop.disabled=true;}
+}
+
+async function saveRec() {
+  if(!recBlob) return;
+  const title = document.getElementById('rec-title').value.trim() || 'Audio_Manual_'+Date.now();
+  const fname = `${title}.webm`;
+  try {
+    // Abrir ventana para seleccionar carpeta de descarga
+    if(window.showSaveFilePicker) {
+      const h = await window.showSaveFilePicker({suggestedName:fname,types:[{description:'Audio',accept:{'audio/webm':['.webm']}}]});
+      const w = await h.createWritable(); await w.write(recBlob); await w.close();
+    } else {
+      const u = URL.createObjectURL(recBlob); const a = document.createElement('a'); a.href=u; a.download=fname; a.click();
+    }
+    showToast('Guardado local. Subiendo a Firebase…','☁️');
+    
+    const blob2 = recBlob;
+    document.getElementById('btn-rec-save').disabled=true;
+    document.getElementById('rec-title').value='';
+    document.getElementById('rec-time').textContent='00:00';
+    recBlob=null; setRecUI('idle');
+    
+    // Subir a Firebase (Storage y Database)
+    const snap = await storage.ref(`audios_crm/${fname}`).put(blob2);
+    const url = await snap.ref.getDownloadURL();
+    
+    await db.collection('historial_llamadas').add({
+      fecha:getDateStr(),
+      nombre:title,
+      duracion:recDur,
+      agente:CUP.name,
+      audioUrl:url,
+      timestamp:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    showToast('Sincronizado en Firebase','✅');
+  } catch(e){ console.error(e); showToast('Proceso cancelado o hubo un error','❌'); }
+}
+
+
+// --- GRABADORA DE LLAMADAS (MEZCLADOR MICRÓFONO + PESTAÑA PARA ZADARMA) ---
+var callRecMR=null, callRecChunks=[], callRecIsOn=false, callRecPaused=false;
+var callRecSec=0, callRecTimer=null, callRecBlob=null, callRecDur='';
+var callAudioCtx=null;
+var callActiveStreams=[];
+
+async function startCallRec() {
+  try {
+    const withCustomer = document.getElementById('record-customer-audio').checked;
+    let finalStream;
+    callActiveStreams = [];
+
+    if (withCustomer) {
+      // 1. Obtener Audio de la pestaña (Cliente de Zadarma)
+      // El navegador pedirá elegir la pestaña actual. ¡Asegúrate de marcar "Compartir audio de pestaña"!
+      const tabStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+      
+      // 2. Obtener Audio del Micrófono (Agente)
+      const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      callActiveStreams.push(tabStream, micStream);
+
+      // 3. Mezclar los dos audios
+      callAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const dest = callAudioCtx.createMediaStreamDestination();
+
+      if (tabStream.getAudioTracks().length > 0) {
+         const tabSource = callAudioCtx.createMediaStreamSource(new MediaStream([tabStream.getAudioTracks()[0]]));
+         tabSource.connect(dest);
+      }
+      if (micStream.getAudioTracks().length > 0) {
+         const micSource = callAudioCtx.createMediaStreamSource(micStream);
+         micSource.connect(dest);
+      }
+
+      finalStream = dest.stream;
+
+      // Apagamos el video de la pestaña capturada para ahorrar recursos (solo necesitamos el audio)
+      tabStream.getVideoTracks().forEach(t => t.stop());
+
+    } else {
+      // Grabación simple del Micrófono (Si el agente usa altavoces, se escuchará al cliente de fondo)
+      finalStream = await navigator.mediaDevices.getUserMedia({audio:true});
+      callActiveStreams.push(finalStream);
+    }
+
+    callRecMR = new MediaRecorder(finalStream); 
+    callRecChunks = [];
+    callRecMR.ondataavailable = e => callRecChunks.push(e.data);
+    callRecMR.onstop = () => { 
+      callRecBlob = new Blob(callRecChunks, {type:'audio/webm'}); 
+      document.getElementById('btn-call-rec-save').disabled = false; 
+    };
+
+    callRecMR.start(); callRecIsOn=true; callRecPaused=false; callRecSec=0;
+    callRecTimer = setInterval(() => { 
+      callRecSec++; document.getElementById('call-rec-time').textContent=fmtTime(callRecSec); 
+    }, 1000);
+    setCallRecUI('recording');
+
+  } catch(e) { 
+    console.error(e); 
+    showToast('No se pudo iniciar. Verifica permisos (Micrófono/Pantalla)','❌'); 
+  }
+}
+
+function pauseCallRec() {
+  if(!callRecIsOn) return;
+  if(callRecPaused) { 
+    callRecMR.resume(); callRecPaused=false; 
+    callRecTimer=setInterval(()=>{callRecSec++;document.getElementById('call-rec-time').textContent=fmtTime(callRecSec);},1000); 
+    setCallRecUI('recording'); 
+  } else { 
+    callRecMR.pause(); callRecPaused=true; 
+    clearInterval(callRecTimer); setCallRecUI('paused'); 
+  }
+}
+
+function stopCallRec() {
+  if(!callRecIsOn) return;
+  callRecMR.stop(); 
+  
+  // Detener todos los tracks (Micrófono y Pantalla)
+  callActiveStreams.forEach(s => s.getTracks().forEach(t => t.stop()));
+  if (callAudioCtx) { callAudioCtx.close(); callAudioCtx = null; }
+
+  clearInterval(callRecTimer); 
+  callRecDur = document.getElementById('call-rec-time').textContent;
+  callRecIsOn=false; callRecPaused=false; 
+  setCallRecUI('ready');
+}
+
+function setCallRecUI(st) {
+  const s=document.getElementById('call-rec-status'), w=document.getElementById('call-rec-wave');
+  const r=document.getElementById('btn-call-rec-start'), p=document.getElementById('btn-call-rec-pause'), stop=document.getElementById('btn-call-rec-stop');
+  
+  if(st==='recording'){s.textContent='GRABANDO LLAMADA';s.className='rec-status recording';w.classList.add('active');r.disabled=true;p.disabled=false;stop.disabled=false;}
+  else if(st==='paused'){s.textContent='LLAMADA PAUSADA';s.className='rec-status paused';w.classList.remove('active');}
+  else if(st==='ready'){s.textContent='AUDIO LISTO';s.className='rec-status';w.classList.remove('active');r.disabled=false;p.disabled=true;stop.disabled=true;}
+  else{s.textContent='ESPERANDO LLAMADA';s.className='rec-status';w.classList.remove('active');r.disabled=false;p.disabled=true;stop.disabled=true;}
+}
+
+async function saveCallRec() {
+  if(!callRecBlob) return;
+  const title = document.getElementById('call-rec-title').value.trim() || 'Contrato_'+Date.now();
+  const fname = `${title}.webm`;
+  try {
+    // Abrir ventana nativa del navegador para elegir la carpeta de descarga
+    if(window.showSaveFilePicker) {
+      const h = await window.showSaveFilePicker({suggestedName:fname,types:[{description:'Audio',accept:{'audio/webm':['.webm']}}]});
+      const w = await h.createWritable(); await w.write(callRecBlob); await w.close();
+    } else {
+      const u = URL.createObjectURL(callRecBlob); const a = document.createElement('a'); a.href=u; a.download=fname; a.click();
+    }
+    showToast('Guardado local. Subiendo a Firebase…','☁️');
+    
+    const blob2 = callRecBlob;
+    document.getElementById('btn-call-rec-save').disabled=true;
+    document.getElementById('call-rec-title').value='';
+    document.getElementById('call-rec-time').textContent='00:00';
+    callRecBlob=null; setCallRecUI('idle');
+    
+    // Subir a la MISMA base de datos y Storage
+    const snap = await storage.ref(`audios_crm/${fname}`).put(blob2);
+    const url = await snap.ref.getDownloadURL();
+    
+    await db.collection('historial_llamadas').add({
+      fecha:getDateStr(),
+      nombre:title,
+      duracion:callRecDur,
+      agente:CUP.name,
+      audioUrl:url,
+      timestamp:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    showToast('Contrato guardado exitosamente','✅');
+  } catch(e){ console.error(e); showToast('Cancelaste la descarga o hubo un error','❌'); }
+}
+
+
+// ==========================================
+// F. GENERADOR Y ENVÍO DE WSP 
+// ==========================================
+const planesWowData = {
+  "300_solo": { base: "300 Mbps", promo: "500 Mbps", tiempoPromoVel: "6 meses", precioPromo: 74.90, precioRegular: 84.90, incluyeDGO: false, beneficios: "" },
+  "300_dgo": { base: "300 Mbps", promo: "500 Mbps", tiempoPromoVel: "6 meses", precioPromo: 79.90, precioRegular: 84.90, incluyeDGO: true, beneficios: "DGO TV (Incl. +30 canales)" },
+  "500_dgo": { base: "500 Mbps", promo: "1000 Mbps", tiempoPromoVel: "12 meses", precioPromo: 84.90, precioRegular: 89.90, incluyeDGO: true, beneficios: "DGO TV (Incl. +30 canales)" },
+  "1000_l1max": { base: "1000 Mbps", promo: "1000 Mbps", tiempoPromoVel: "", precioPromo: 94.90, precioRegular: 104.90, incluyeDGO: true, beneficios: "DGO TV (Incl. +32 canales) + L1 MAX" },
+  "1000_fam": { base: "1000 Mbps", promo: "1000 Mbps", tiempoPromoVel: "", precioPromo: 99.90, precioRegular: 104.90, incluyeDGO: true, beneficios: "DGO Familia (Incl. +33 canales) + L1 MAX + DSPORTS + Prime Video" },
+  "1000_full": { base: "1000 Mbps", promo: "1000 Mbps", tiempoPromoVel: "", precioPromo: 148.90, precioRegular: 158.90, incluyeDGO: true, beneficios: "DGO Full (Incl. +100 canales) + L1 MAX + DSPORTS + Prime Video" }
+};
+
+function generarMensajeWsp() {
+  const cliente = document.getElementById("wsp-cliente").value.trim() || "[Nombre del cliente]";
+  let asesor = document.getElementById("wsp-asesor").value.trim();
+  if(!asesor && CUP && CUP.name) asesor = CUP.name;
+  if(!asesor) asesor = "[Nombre del asesor]";
+  const fechaRaw = document.getElementById("wsp-fecha").value;
+  let fechaFormat = "[Fecha]";
+  if (fechaRaw) {
+    const partes = fechaRaw.split('-');
+    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    fechaFormat = `${parseInt(partes[2], 10)} de ${meses[parseInt(partes[1], 10) - 1]}`;
+  }
+  const horaVal = document.getElementById("wsp-hora").value || "[Rango de hora]";
+  const fechaHora = `${fechaFormat}, entre las ${horaVal}`;
+  const correo = document.getElementById("wsp-correo").value.trim() || "[correo registrado]";
+  const celular = document.getElementById("wsp-celular").value.trim() || "[número de celular]";
+  const idPlan = document.getElementById("wsp-plan").value;
+  const plan = planesWowData[idPlan];
+  const tieneDuo = document.getElementById("wsp-duo").checked;
+  let precioPromoFinal = plan.precioPromo;
+  let precioRegularFinal = plan.precioRegular;
+
+  if (tieneDuo) {
+    precioPromoFinal = (parseFloat(precioPromoFinal) + 10).toFixed(2);
+    precioRegularFinal = (parseFloat(precioRegularFinal) + 10).toFixed(2);
+  } else {
+    precioPromoFinal = parseFloat(precioPromoFinal).toFixed(2);
+    precioRegularFinal = parseFloat(precioRegularFinal).toFixed(2);
+  }
+
+  let promoVelocidadTexto = (plan.base !== plan.promo) 
+    ? `— como bienvenida, disfruta ${plan.promo} sin costo extra durante tus primeros ${plan.tiempoPromoVel}` 
+    : `— disfruta de la máxima velocidad de 1000 Mbps desde el primer día`;
+
+  let textoBeneficios = "";
+  if (plan.incluyeDGO) {
+    textoBeneficios += `\n📩 Tu plan incluye ${plan.beneficios} — las credenciales llegarán al correo ${correo}`;
+  } else {
+    textoBeneficios += `\n📩 Tus recibos y código de cliente llegarán al correo ${correo}`;
+  }
+  if (tieneDuo) { textoBeneficios += `\n📞 Tu plan incluye Telefonía Fija Dúo (1000 minutos a nivel nacional)`; }
+
+  const mensaje = `Hola ${cliente}! 👋 Soy ${asesor} de WOW Perú - Interconexión 360. Ya quedó registrada tu contratación, aquí tienes el resumen: \n\n📶 Plan: ${plan.base} ${promoVelocidadTexto} \n💰 Monto: S/ ${precioPromoFinal} pagando antes del día 3 de cada mes (primeros 6 meses). Después, tu tarifa regular es S/ ${precioRegularFinal} \n📅 Instalación: ${fechaHora} — el horario puede variar un poco según la ruta de nuestros técnicos \n🪪 El titular del servicio debe estar presente con su DNI; si no puede, debe dejar una carta poder para autorizar la instalación ${textoBeneficios}\n📱 Nuestro técnico te llamará al ${celular} para coordinar la visita \n \nCualquier duda, escríbenos por acá. ¡Gracias por elegir WOW! 🙌`;
+
+  document.getElementById("wsp-resultado").value = mensaje;
+  showToast("Vista previa generada", "✅");
+}
+
+function copiarWsp() {
+  const txt = document.getElementById("wsp-resultado");
+  if(!txt.value) return showToast("Primero debes generar el mensaje", "⚠️");
+  txt.select();
+  document.execCommand("copy");
+  if(window.getSelection) { window.getSelection().removeAllRanges(); }
+  showToast("Copiado al portapapeles", "📋");
+}
+
+function enviarWspDirecto() {
+  const celular = document.getElementById("wsp-celular").value.trim();
+  const mensaje = document.getElementById("wsp-resultado").value.trim();
+  if (!mensaje) return showToast("Primero genera el mensaje", "⚠️");
+  if (!celular || celular.length < 9) return showToast("Ingresa un número válido", "⚠️");
+  
+  let numLimpio = celular.replace(/\s+/g, '');
+  if (numLimpio.length === 9 && numLimpio.startsWith('9')) { numLimpio = "51" + numLimpio; }
+
+  const url = `https://api.whatsapp.com/send?phone=${numLimpio}&text=${encodeURIComponent(mensaje)}`;
+  window.open(url, '_blank');
+  showToast("Abriendo WhatsApp...", "💬");
+}
+
+function limpiarWsp() {
+  document.getElementById("wsp-cliente").value = "";
+  document.getElementById("wsp-fecha").value = "";
+  document.getElementById("wsp-hora").value = "";
+  document.getElementById("wsp-celular").value = "";
+  document.getElementById("wsp-correo").value = "";
+  document.getElementById("wsp-plan").value = "300_dgo"; 
+  document.getElementById("wsp-duo").checked = false;
+  document.getElementById("wsp-resultado").value = "";
+  if (CUP && CUP.name) { document.getElementById("wsp-asesor").value = CUP.name; } 
+  else { document.getElementById("wsp-asesor").value = ""; }
+  showToast("Campos limpiados", "🧹");
+}
+
+// ==========================================
+// G. GESTIÓN DE AUDITORÍA (HISTORIAL LOCAL)
+// ==========================================
+async function editRecord(id, oldName) {
+  const newName = prompt("Ingresa el nuevo nombre o referencia:", oldName);
+  if (newName && newName.trim() !== "" && newName !== oldName) {
+    try { await db.collection('historial_llamadas').doc(id).update({ nombre: newName.trim() }); showToast('Actualizado', '✅'); } catch (e) { showToast('Error', '❌'); }
+  }
+}
+
+async function deleteRecord(id, audioUrl) {
+  if (confirm("¿Estás seguro de que deseas eliminar permanentemente este registro?")) {
+    try {
+      await db.collection('historial_llamadas').doc(id).delete();
+      if (audioUrl && audioUrl !== 'null') { try { await storage.refFromURL(audioUrl).delete(); } catch(e){} }
+      showToast('Eliminado', '🗑️');
+    } catch (e) { showToast('Error', '❌'); }
+  }
+}
+
+// ==========================================
+// H. LECTURA Y CONSTRUCCIÓN DE DASHBOARD 
+// ==========================================
+function initListeners() {
+  console.log("⏳ Sincronizando datos...");
+
+  // CHAT GENERAL
+  db.collection('chat_general').orderBy('ts').limitToLast(100).onSnapshot(snap => {
+    currentChatMessages = [];
+    snap.forEach(doc => { currentChatMessages.push(doc.data()); });
+    renderChatMessages();
+  });
+
+  // MURO
+  db.collection('social_feed').orderBy('ts','desc').limit(25).onSnapshot(snap => {
+    const list = document.getElementById('feed-list'); list.innerHTML = '';
+    document.getElementById('stat-posts').textContent = snap.size;
+    if(snap.empty) { list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">Muro vacío.</div>'; return; }
+    
+    snap.forEach(doc => {
+      const p = doc.data();
+      const authorProfile = allProfilesCache[p.uid] || { name: p.autor || 'Agente', avatarUrl: '' };
+      let avatarHTML = authorProfile.avatarUrl 
+        ? `<div style="width:36px;height:36px;border-radius:50%;background:url('${authorProfile.avatarUrl}') center/cover; border: 2px solid var(--border);"></div>`
+        : `<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg, var(--p), var(--p3));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;">${authorProfile.name.charAt(0).toUpperCase()}</div>`;
+      list.innerHTML += `
+        <div class="card" style="margin-bottom:12px;border-radius:14px;background:var(--bg2);">
+          <div style="padding:16px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              ${avatarHTML}
+              <div><div style="font-size:14px;font-weight:800;color:var(--text);">${authorProfile.name}</div><div style="font-size:11px;color:var(--muted);font-weight:600;">${p.fecha}</div></div>
+            </div>
+            <div style="font-size:14px;line-height:1.6;color:var(--text); white-space: pre-wrap;">${p.contenido}</div>
+          </div>
+        </div>`;
+    });
+  });
+
+  // DASHBOARD Y AUDIOS
+  db.collection('historial_llamadas').orderBy('timestamp','desc').onSnapshot(snap => {
+    histAll = []; 
+    snap.forEach(doc => { let data = doc.data(); data.id = doc.id; histAll.push(data); });
+    document.getElementById('stat-total').textContent = snap.size;
+    renderDashboardCharts(); filterHist();
+  });
+
+  // AGENTES Y PRESENCIA
+  db.collection('presence').onSnapshot(snap => {
+    currentAgents = []; 
+    snap.forEach(doc => currentAgents.push({ uid: doc.id, ...doc.data() }));
+    renderPresenceUI(); 
+  });
+  setInterval(renderPresenceUI, 15000);
+}
+
+function renderPresenceUI() {
+  const c = document.getElementById('dash-agents'); 
+  if(!c) return; c.innerHTML = '';
+  const now = Date.now();
+  let processed = currentAgents.map(u => { let isOnline = (u.online === true) && (now - (u.lastSeen || 0) < 60000); return { ...u, isOnline }; });
+  let adminOnlineElsewhere = processed.some(u => u.name && u.name.toLowerCase() === 'admin' && u.isOnline);
+  const alertBanner = document.getElementById('admin-alert-banner');
+  if (alertBanner) {
+    if (adminOnlineElsewhere && (!CUP || CUP.name.toLowerCase() !== 'admin')) alertBanner.style.display = 'flex';
+    else alertBanner.style.display = 'none';
+  }
+  processed = processed.filter(u => !(u.name && u.name.toLowerCase() === 'admin'));
+  processed.sort((a, b) => (b.isOnline === a.isOnline) ? 0 : b.isOnline ? 1 : -1);
+  processed.forEach(u => {
+    const isOnline = u.isOnline;
+    const profile = allProfilesCache[u.uid] || { name: u.name, avatarUrl: '' };
+    let avatarHTML = profile.avatarUrl
+      ? `<div style="width:26px;height:26px;border-radius:50%;background:url('${profile.avatarUrl}') center/cover; border: 1px solid var(--border);"></div>`
+      : `<div style="width:26px;height:26px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;">${(u.name||'?').charAt(0).toUpperCase()}</div>`;
+    c.innerHTML += `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;">
+      <div style="display:flex;align-items:center;gap:10px;">${avatarHTML}<span style="color:var(--text);">${u.name||'?'}</span></div>
+      <span style="color:${isOnline?'var(--success)':'var(--muted2)'};font-weight:700;font-size:11px; display:flex; align-items:center; gap:6px;">
+        ${isOnline?'<span class="pulse-dot anim"></span> Online':'<span class="status-dot-offline"></span> Offline'}
+      </span>
+    </div>`;
+  });
+  if(!processed.length) c.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:10px 0;">Sin agentes registrados</div>';
+}
+
+function normalizeAgente(name) {
+  if (!name) return 'DESCONOCIDO';
+  let n = name.trim().toUpperCase();
+  if (n.includes('DANIELA')) return 'DANIELA';
+  if (n.includes('MARCO')) return 'MARCO';
+  if (n.includes('MARIETTE')) return 'MARIETTE';
+  if (n.includes('ALEJANDRO')) return 'ALEJANDRO';
+  if (n.includes('FRANCO')) return 'FRANCO';
+  return n;
+}
+
+function renderDashboardCharts() {
+  if (!histAll) return;
+  const dToday = new Date();
+  const hoyStr = `${dToday.getDate().toString().padStart(2,'0')}/${(dToday.getMonth()+1).toString().padStart(2,'0')}`;
+  const currMonthStr = (dToday.getMonth() + 1).toString().padStart(2, '0'); 
+  
+  const dA = document.getElementById('dash-activity');
+  if(!histAll.length){ dA.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-weight:500;">Sin actividad aún</div>'; }
+  else { 
+    dA.innerHTML = histAll.slice(0,6).map(h => {
+      let prof = Object.values(allProfilesCache).find(p => p.name && p.name.toUpperCase() === normalizeAgente(h.agente)) || {};
+      let avHTML = prof.avatarUrl 
+        ? `<div style="width:24px;height:24px;border-radius:50%;background:url('${prof.avatarUrl}') center/cover; border: 1px solid var(--border); flex-shrink:0;"></div>` 
+        : `<div style="width:24px;height:24px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;">${(h.agente||'?').charAt(0).toUpperCase()}</div>`;
+      return `<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);">
+        ${avHTML}
+        <div style="flex:1;min-width:0;">
+          <p style="font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${h.nombre}</p>
+          <p style="font-size:11px;color:var(--muted);font-weight:500;">${h.agente} · ${h.fecha}</p>
+        </div>
+        <span class="tag purple" style="font-size:10px;">${h.duracion}</span>
+      </div>`;
+    }).join(''); 
+  }
+
+  const llamadasHoy = histAll.filter(h => h.fecha && h.fecha.startsWith(hoyStr));
+  document.getElementById('stat-hoy').textContent = llamadasHoy.length;
+
+  const agentCountsHoy = {};
+  llamadasHoy.forEach(h => { 
+    const agenteNormalizado = normalizeAgente(h.agente);
+    agentCountsHoy[agenteNormalizado] = (agentCountsHoy[agenteNormalizado] || 0) + 1; 
+  });
+  const sortedAgentsHoy = Object.entries(agentCountsHoy).sort((a,b) => b[1] - a[1]);
+  
+  const labelsHoy = sortedAgentsHoy.map(a => a[0]);
+  const dataHoy = sortedAgentsHoy.map(a => a[1]);
+
+  if (!dailyChart) {
+    const ctxD = document.getElementById('dailyChart').getContext('2d');
+    dailyChart = new Chart(ctxD, {
+      type: 'bar',
+      data: { labels: labelsHoy, datasets: [{ label: 'Hoy', data: dataHoy, backgroundColor: 'rgba(59, 130, 246, 0.85)', borderColor: '#3b82f6', borderWidth: 1, borderRadius: 6 }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: '#9ba1b0', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: '#f1f2f5', font: { size: 11, weight: '600' } }, grid: { display: false } } },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#212228', titleColor: '#f1f2f5', bodyColor: '#9ba1b0', borderColor: '#424552', borderWidth: 1 } }
+      }
+    });
+  } else {
+    dailyChart.data.labels = labelsHoy; dailyChart.data.datasets[0].data = dataHoy; dailyChart.update();
+  }
+
+  const listHoy = document.getElementById('dash-agent-stats-hoy');
+  if (sortedAgentsHoy.length === 0) { listHoy.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;">Sin llamadas hoy</div>'; }
+  else {
+    listHoy.innerHTML = sortedAgentsHoy.map(([agente, total]) => {
+      let foundProfile = Object.values(allProfilesCache).find(p => p.name && p.name.toUpperCase() === agente.toUpperCase()) || {};
+      let avatarHTML = foundProfile.avatarUrl
+        ? `<div style="width:22px;height:22px;border-radius:50%;background:url('${foundProfile.avatarUrl}') center/cover; border: 1px solid var(--border);"></div>`
+        : `<div style="width:22px;height:22px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;">${agente.charAt(0)}</div>`;
+      return `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;font-weight:600;">
+        <div style="display:flex;align-items:center;gap:8px;">${avatarHTML}<span style="color:var(--text);">${agente}</span></div>
+        <span style="color:var(--p);font-weight:700;">${total}</span>
+      </div>`}).join('');
+  }
+
+  const filterType = document.getElementById('trend-filter').value;
+  let filteredHist = histAll;
+  if (filterType === 'mes') { filteredHist = histAll.filter(h => { if(!h.fecha) return false; const parts = h.fecha.split(' ')[0].split('/'); return parts.length > 1 && parts[1] === currMonthStr; }); }
+
+  const fechasSet = new Set(); const datosPorAgente = {}; const totalesPorAgente = {};
+  filteredHist.forEach(h => {
+    const dia = h.fecha.split(' ')[0]; fechasSet.add(dia); const agenteNormalizado = normalizeAgente(h.agente);
+    if (!datosPorAgente[agenteNormalizado]) { datosPorAgente[agenteNormalizado] = {}; totalesPorAgente[agenteNormalizado] = 0; }
+    if (!datosPorAgente[agenteNormalizado][dia]) datosPorAgente[agenteNormalizado][dia] = 0;
+    datosPorAgente[agenteNormalizado][dia]++; totalesPorAgente[agenteNormalizado]++;
+  });
+
+  const labelsFechas = Array.from(fechasSet).sort((a, b) => {
+    const [diaA, mesA] = a.split('/').map(Number); const [diaB, mesB] = b.split('/').map(Number);
+    return mesA !== mesB ? mesA - mesB : diaA - diaB;
+  });
+
+  const paletaColores = [ { border: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' }, { border: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' }, { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' }, { border: '#f97316', bg: 'rgba(249, 115, 22, 0.1)' }, { border: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' } ];
+  let colorIndex = 0;
+  const datasetsGrafico = Object.keys(datosPorAgente).map(agente => {
+    const color = paletaColores[colorIndex % paletaColores.length]; colorIndex++;
+    const dataLlamadas = labelsFechas.map(fecha => datosPorAgente[agente][fecha] || 0);
+    return { label: agente, data: dataLlamadas, borderColor: color.border, backgroundColor: color.bg, borderWidth: 2, tension: 0.4, pointBackgroundColor: '#212228', pointBorderColor: color.border, pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 6, fill: false };
+  });
+
+  if (!trendChart) {
+    const ctxT = document.getElementById('trendChart').getContext('2d');
+    trendChart = new Chart(ctxT, { type: 'line', data: { labels: labelsFechas, datasets: datasetsGrafico },
+      options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#212228', titleColor: '#f1f2f5', bodyColor: '#9ba1b0', borderColor: '#424552', borderWidth: 1 } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 5, color: '#9ba1b0', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)', borderDash: [5, 5] } }, x: { ticks: { color: '#f1f2f5', font: { size: 10 } }, grid: { display: false } } }
+    });
+  } else { trendChart.data.labels = labelsFechas; trendChart.data.datasets = datasetsGrafico; trendChart.update(); }
+
+  const listTrend = document.getElementById('dash-agent-stats-trend');
+  const sortedAgentsTrend = Object.entries(totalesPorAgente).sort((a,b) => b[1] - a[1]);
+  if (sortedAgentsTrend.length === 0) { listTrend.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;width:100%;">No hay datos en este periodo</div>'; }
+  else {
+    listTrend.innerHTML = sortedAgentsTrend.map(([agente, total], i) => {
+      const agentDataset = datasetsGrafico.find(d => d.label === agente);
+      const dotColor = agentDataset ? agentDataset.borderColor : '#fff';
+      let foundProf = Object.values(allProfilesCache).find(p => p.name && p.name.toUpperCase() === agente.toUpperCase());
+      let avImg = (foundProf && foundProf.avatarUrl) ? `<div style="width:16px;height:16px;border-radius:50%;background:url('${foundProf.avatarUrl}') center/cover; margin-right:6px; border:1px solid var(--border);"></div>` : '';
+      return `
+      <div style="background:var(--bg2); border:1px solid var(--border); padding:8px 12px; border-radius:8px; display:flex; align-items:center; gap:10px; font-size:11px; font-weight:700;">
+        <div style="width:10px; height:10px; border-radius:3px; background:${dotColor}; flex-shrink:0;"></div>
+        <div style="display:flex; flex-direction:column;"><span style="color:var(--text); text-transform:uppercase; font-size:10px; display:flex; align-items:center;">${avImg} ${agente}</span><span style="color:var(--muted);">Totales: <span style="color:${dotColor}; font-size:12px;">${total}</span></span></div>
+      </div>`}).join('');
+  }
+
+  const metasContainer = document.getElementById('dash-metas');
+  if (metasContainer) {
+    const llamadasMesActual = histAll.filter(h => { if(!h.fecha) return false; const parts = h.fecha.split(' ')[0].split('/'); return parts.length > 1 && parts[1] === currMonthStr; });
+    const targets = [
+      { key: 'MARCO', label: 'Marco', meta: 250 }, { key: 'MARIETTE', label: 'Mariette', meta: 170 }, { key: 'DANIELA', label: 'Daniela', meta: 170 }, { key: 'ALEJANDRO', label: 'Alejandro', meta: 170 }, { key: 'FRANCO', label: 'Franco', meta: 55 }
+    ];
+    const conteoMetas = { 'MARIETTE':0, 'DANIELA':0, 'ALEJANDRO':0, 'MARCO':0, 'FRANCO':0 };
+    llamadasMesActual.forEach(h => { const ag = normalizeAgente(h.agente); targets.forEach(t => { if (ag === t.key) conteoMetas[t.key]++; }); });
+
+    const getRankInfo = (calls, meta) => {
+      const thresholds = { radiante: Math.floor(meta * 1.00), inmortal: Math.floor(meta * 0.85), ascendente: Math.floor(meta * 0.75), diamante: Math.floor(meta * 0.60), platino: Math.floor(meta * 0.50), oro: Math.floor(meta * 0.40), plata: Math.floor(meta * 0.30), bronce: Math.floor(meta * 0.20), hierro: Math.floor(meta * 0.10) };
+      if (calls >= thresholds.radiante) return { name: 'Radiante', img: 'https://trackercdn.com/cdn/tracker.gg/valorant/icons/tiers/27.png', color: '#ffea9c' };
+      if (calls >= thresholds.inmortal) return { name: 'Inmortal', img: 'https://trackercdn.com/cdn/tracker.gg/valorant/icons/tiers/26.png', color: '#c74d56' };
+      if (calls >= thresholds.ascendente) return { name: 'Ascendente', img: 'https://trackercdn.com/cdn/tracker.gg/valorant/icons/tiers/23.png', color: '#66b88b' };
+      if (calls >= thresholds.diamante) return { name: 'Diamante', img: 'https://trackercdn.com/cdn/tracker.gg/valorant/icons/tiers/20.png', color: '#b489c4' };
+      if (calls >= thresholds.platino) return { name: 'Platino', img: 'https://trackercdn.com/cdn/tracker.gg/valorant/icons/tiers/17.png', color: '#5299a9' };
+      if (calls >= thresholds.oro)  return { name: 'Oro', img: 'https://trackercdn.com/cdn/tracker.gg/valorant/icons/tiers/14.png', color: '#f2ca5a' };
+      if (calls >= thresholds.plata)  return { name: 'Plata', img: 'https://trackercdn.com/cdn/tracker.gg/valorant/icons/tiers/11.png', color: '#cfd5d8' };
+      if (calls >= thresholds.bronce)  return { name: 'Bronce', img: 'https://trackercdn.com/cdn/tracker.gg/valorant/icons/tiers/8.png', color: '#a57155' };
+      if (calls >= thresholds.hierro)  return { name: 'Hierro', img: 'https://trackercdn.com/cdn/tracker.gg/valorant/icons/tiers/5.png', color: '#838383' };
+      return { name: 'Sin Rango', img: 'https://trackercdn.com/cdn/tracker.gg/valorant/icons/tiers/0.png', color: '#5c5c5c' };
+    };
+
+    let htmlMetas = '';
+    targets.sort((a,b) => conteoMetas[b.key] - conteoMetas[a.key]);
+    targets.forEach(t => {
+      const actual = conteoMetas[t.key]; const metaPersonal = t.meta;
+      const porcentaje = Math.min((actual / metaPersonal) * 100, 100);
+      const rank = getRankInfo(actual, t.meta); 
+      const hue = (porcentaje / 100) * 140;
+      const colorStart = `hsl(${Math.max(0, hue - 15)}, 85%, 45%)`; const colorEnd = `hsl(${hue}, 90%, 55%)`; const glow = `hsla(${hue}, 90%, 55%, 0.3)`;
+      let foundProfileMeta = Object.values(allProfilesCache).find(p => p.name && p.name.toUpperCase() === t.label.toUpperCase()) || {};
+      let avatarHTMLMeta = foundProfileMeta.avatarUrl
+        ? `<div style="width:24px;height:24px;border-radius:50%;background:url('${foundProfileMeta.avatarUrl}') center/cover; border: 1px solid var(--border); margin-right: 6px;"></div>`
+        : `<div style="width:24px;height:24px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff; margin-right: 6px;">${t.label.charAt(0).toUpperCase()}</div>`;
+
+      htmlMetas += `
+        <div style="margin-bottom: 12px; background: rgba(0,0,0,0.15); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <img src="${rank.img}" alt="${rank.name}" style="width:38px; height:38px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); object-fit: contain;">
+              <div>
+                <div style="color:var(--text); font-size:13px; font-weight:800; display:flex; align-items:center;">${avatarHTMLMeta} ${t.label}</div>
+                <div style="color:${rank.color}; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">${rank.name}</div>
+              </div>
+            </div>
+            <div style="text-align:right;"><span style="color:${colorEnd}; font-variant-numeric: tabular-nums; font-size:16px; font-weight:900;">${actual}</span> <span style="font-size:11px; color:var(--muted); font-weight:600;">/ ${metaPersonal}</span></div>
+          </div>
+          <div style="width:100%; height:12px; background:rgba(0,0,0,0.4); border-radius:10px; overflow:hidden; box-shadow: inset 0 1px 4px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.03); position: relative;">
+            <div style="width:${porcentaje}%; height:100%; background: linear-gradient(90deg, ${colorStart}, ${colorEnd}); box-shadow: 0 0 12px ${glow}; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background 0.8s ease; border-radius:10px; position: relative;">
+              <div style="position:absolute; top:0; left:0; right:0; height:50%; background: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0)); border-radius: 10px 10px 0 0;"></div>
+            </div>
+          </div>
+        </div>`;
+    });
+    metasContainer.innerHTML = htmlMetas;
+  }
+}
+
+function getAudiosDelMes() {
+  const dToday = new Date(); const currMonthStr = (dToday.getMonth() + 1).toString().padStart(2, '0'); 
+  return histAll.filter(h => { if(!h.fecha) return false; const parts = h.fecha.split(' ')[0].split('/'); return parts.length > 1 && parts[1] === currMonthStr; });
+}
+
+function renderAuditoria(arr) {
+  const tbody=document.getElementById('hist-body');
+  if(!arr.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted);font-weight:500;">No hay audios guardados en este mes.</td></tr>'; return; }
+  tbody.innerHTML = arr.map(h => `<tr>
+    <td style="white-space:nowrap; color:var(--muted); font-size:12px;">${h.fecha}</td>
+    <td><strong style="font-size:13px; color:var(--text);">${h.nombre}</strong></td>
+    <td><span class="tag purple">${h.duracion}</span></td>
+    <td><span class="tag blue">${h.agente}</span></td>
+    <td>${h.audioUrl?`<a href="${h.audioUrl}" target="_blank" class="btn-dl-mini">⬇ Audio</a>`:'<span style="color:var(--muted2);font-size:12px;font-weight:600;">Sin audio</span>'}</td>
+    <td>
+      <div style="display:flex; gap:6px;">
+        <button class="btn-dl-mini" style="background:rgba(14,165,233,0.15); color:var(--info); border-color:rgba(14,165,233,0.3); padding:6px 10px;" onclick="editRecord('${h.id}', '${h.nombre.replace(/'/g, "\\'")}')" title="Editar Referencia">✏️</button>
+        <button class="btn-dl-mini" style="background:rgba(239,68,68,0.15); color:var(--danger); border-color:rgba(239,68,68,0.3); padding:6px 10px;" onclick="deleteRecord('${h.id}', '${h.audioUrl || ''}')" title="Eliminar Registro">🗑️</button>
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+function filterHist() {
+  const q = document.getElementById('hist-search').value.toLowerCase();
+  const audiosDelMes = getAudiosDelMes();
+  const audiosFiltrados = audiosDelMes.filter(h => `${h.nombre} ${h.agente} ${h.fecha}`.toLowerCase().includes(q));
+  renderAuditoria(audiosFiltrados);
+}
+
+// ==========================================
+// I. PUBLICACIÓN Y CHAT
+// ==========================================
+function insertEmoji(emoji) { const inp = document.getElementById('chat-inp'); inp.value += emoji; inp.focus(); document.getElementById('emoji-picker').classList.remove('show'); }
+async function sendTextMsg() {
+  const inp = document.getElementById('chat-inp'); const t = inp.value.trim(); if(!t) return; inp.value='';
+  const d = new Date(); const h = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  try { await db.collection('chat_general').add({ uid: CU.uid, text: t, type: 'text', hora: h, ts: firebase.firestore.FieldValue.serverTimestamp() }); } catch(e) { console.error(e); }
+}
+async function sendMediaMsg(event) {
+  const file = event.target.files[0]; if(!file) return; document.getElementById('chat-media-upload').value = ""; 
+  const isVideo = file.type.startsWith('video/'); const typeStr = isVideo ? 'video' : 'image';
+  showToast("Subiendo archivo...", "⏳");
+  try {
+    const snap = await storage.ref(`chat_media/${CU.uid}_${Date.now()}_${file.name}`).put(file);
+    const mediaUrl = await snap.ref.getDownloadURL();
+    const d = new Date(); const h = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+    await db.collection('chat_general').add({ uid: CU.uid, text: isVideo ? '🎥 Video enviado' : '📷 Imagen enviada', type: typeStr, mediaUrl: mediaUrl, hora: h, ts: firebase.firestore.FieldValue.serverTimestamp() });
+    showToast("Archivo enviado", "✅");
+  } catch(e) { showToast("Error al enviar archivo", "❌"); }
+}
+function renderChatMessages() {
+  const box = document.getElementById('chat-msgs'); box.innerHTML = ''; 
+  document.getElementById('chat-count').textContent = `${currentChatMessages.length} mensajes`; document.getElementById('stat-msgs').textContent = currentChatMessages.length;
+  currentChatMessages.forEach(m => {
+    const isMe = m.uid === CU.uid; const cls = isMe ? 'out' : 'in';
+    const authorProfile = allProfilesCache[m.uid] || { name: 'Desconocido', avatarUrl: '' };
+    let mediaHTML = ''; if(m.type === 'image' && m.mediaUrl) { mediaHTML = `<a href="${m.mediaUrl}" target="_blank"><img src="${m.mediaUrl}" class="chat-media"></a>`; } else if(m.type === 'video' && m.mediaUrl) { mediaHTML = `<video src="${m.mediaUrl}" controls class="chat-media" style="max-height: 200px;"></video>`; }
+    let avatarHTML = '';
+    if(!isMe) { if(authorProfile.avatarUrl) { avatarHTML = `<div class="msg-avatar" style="background-image:url('${authorProfile.avatarUrl}'); border: 2px solid var(--border);"></div>`; } else { avatarHTML = `<div class="msg-avatar" style="background:var(--p); color:#fff;">${authorProfile.name.charAt(0).toUpperCase()}</div>`; } }
+    const nameStr = !isMe ? `<div class="msg-author" style="color:var(--text);">${authorProfile.name}</div>` : '';
+    box.innerHTML += `
+      <div class="msg ${cls}">
+        ${avatarHTML}
+        <div style="max-width: 100%;"><div class="bubble">${nameStr}${m.text !== '📷 Imagen enviada' && m.text !== '🎥 Video enviado' ? m.text : ''}${mediaHTML}</div><div class="msg-meta">${m.hora || ''}</div></div>
+      </div>`;
+  });
+  box.scrollTop = box.scrollHeight;
+}
+async function publishPost() {
+  const t = document.getElementById('feed-text').value.trim(); if(!t) return;
+  const d = new Date(); const fStr = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  try { await db.collection('social_feed').add({ uid: CU.uid, contenido: t, fecha: fStr, ts: firebase.firestore.FieldValue.serverTimestamp() }); document.getElementById('feed-text').value=''; showToast('Publicado en el muro', '✅'); } catch(e) { showToast('Error al publicar', '❌'); }
+}
+
+// ==========================================
+// J. BUSCADOR DE MÚSICA YT
+// ==========================================
+const YOUTUBE_API_KEY = 'AIzaSyDRptcuOZDyYAU3Tdp5Osrox238Z4l4zD8'; 
+async function searchYouTube() {
+  const query = document.getElementById('yt-search-input').value.trim(); if (!query) return showToast('Escribe algo para buscar', '⚠️');
+  const list = document.getElementById('yt-results-list'); list.innerHTML = '<div style="text-align:center; color:var(--muted); font-size:13px; font-weight:500; padding:24px;">Buscando...</div>';
+  try {
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=6&q=${encodeURIComponent(query)}&type=video&key=${YOUTUBE_API_KEY}`;
+    const response = await fetch(url); const data = await response.json();
+    if (data.error) { list.innerHTML = '<div style="text-align:center; color:var(--danger); font-size:13px; font-weight:600;">Error de API. Verifica tu API Key.</div>'; return; }
+    if (data.items && data.items.length > 0) {
+      list.innerHTML = data.items.map(item => `
+        <div style="display:flex; align-items:center; gap:14px; padding:12px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--r2); cursor:pointer; transition:0.2s; box-shadow:0 2px 4px rgba(0,0,0,0.05);" onclick="playYouTubeVideo('${item.id.videoId}')" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='var(--bg2)'">
+          <img src="${item.snippet.thumbnails.default.url}" style="width:110px; height:62px; border-radius:8px; object-fit:cover; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+          <div style="flex:1; min-width:0;"><div style="font-size:14px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.snippet.title}</div><div style="font-size:11px; color:var(--muted); font-weight:600; margin-top:4px;">${item.snippet.channelTitle}</div></div>
+          <div style="padding-right:12px; color:var(--p);"><svg style="width:28px; height:28px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg></div>
+        </div>`).join('');
+    } else { list.innerHTML = '<div style="text-align:center; color:var(--muted); font-size:13px; font-weight:500;">No se encontraron resultados</div>'; }
+  } catch (error) { list.innerHTML = '<div style="text-align:center; color:var(--danger); font-size:13px; font-weight:600;">Error de red al buscar.</div>'; }
+}
+function playYouTubeVideo(videoId) {
+  const wrapper = document.getElementById('yt-player-wrapper'); const iframe = document.getElementById('yt-iframe');
+  iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`; wrapper.style.display = 'block'; showToast('Reproduciendo video...', '🎵');
+}
+</script>
+
+<!-- ============================================== -->
+<!-- SCRIPT DEL WEBPHONE ZADARMA                    -->
+<!-- ============================================== -->
+<script src="https://my.zadarma.com/webphoneWebRTCWidget/v9/js/loader-phone-lib.js?sub_v=1"></script>
+<script src="https://my.zadarma.com/webphoneWebRTCWidget/v9/js/loader-phone-fn.js?sub_v=1"></script>
+<script>
+    if (window.addEventListener) {
+        window.addEventListener('load', function() {
+            zadarmaWidgetFn(
+                'fac360cbd5cf63a430d1', 
+                '913812', 
+                'square', /* square | rounded */
+                'es', /* ru, en, es, fr, de, pl, ua */
+                true, 
+                {right:'20px', bottom:'20px', zIndex:'9999'} 
+            );
+        }, false);
+    } else if (window.attachEvent) {
+        window.attachEvent('onload', function(){
+            zadarmaWidgetFn(
+                'fac360cbd5cf63a430d1', 
+                '913812', 
+                'square', 
+                'es', 
+                true, 
+                {right:'20px', bottom:'20px', zIndex:'9999'}
+            );
+        });
+    }
+</script>
+</body>
+</html>
