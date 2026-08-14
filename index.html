@@ -11,9 +11,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<!-- SCRIPTS DE ZADARMA WEBRTC WIDGET -->
-<script src="https://my.zadarma.com/webphoneWebRTCWidget/v9/js/loader-phone-lib.js?sub_v=1"></script>
-<script src="https://my.zadarma.com/webphoneWebRTCWidget/v9/js/loader-phone-fn.js?sub_v=1"></script>
+<!-- LIBRERÍA DE ENCRIPTACIÓN PARA FIRMAR PETICIONES API DE ZADARMA -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+<!-- SCRIPTS DE ZADARMA WEBRTC WIDGET (Versión 8) -->
+<script src="https://my.zadarma.com/webphoneWebRTCWidget/v8/js/loader-phone-lib.js?v=23"></script>
+<script src="https://my.zadarma.com/webphoneWebRTCWidget/v8/js/loader-phone-fn.js?v=23"></script>
 
 <style>
 /* =========================================
@@ -298,7 +301,7 @@ tr:hover td { background: rgba(255,255,255,0.03); }
       
       <div class="nav-item" onclick="goto('calls',this)">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-        <span style="line-height: 1.2;">Central Llamadas<br><span style="font-size: 9px; color: var(--success); font-weight: 800; letter-spacing: 0.5px;">(ACTIVO)</span></span>
+        <span style="line-height: 1.2;">Central Llamadas<br><span style="font-size: 9px; color: var(--success); font-weight: 800; letter-spacing: 0.5px;">(WEBRTC)</span></span>
       </div>
 
       <div class="nav-item" onclick="goto('recorder',this)">
@@ -465,7 +468,7 @@ tr:hover td { background: rgba(255,255,255,0.03); }
             <!-- CAMPO NUEVO: EXTENSIÓN SIP WEBRTC -->
             <div style="width: 100%; margin-top: 5px;">
               <label class="field-label" style="color: var(--p3);">Extensión SIP (Zadarma WebRTC)</label>
-              <input type="text" id="prof-sip" class="inp" placeholder="Ej. 123456-100" title="Ingresa tu extensión SIP para activar el WebPhone flotante">
+              <input type="text" id="prof-sip" class="inp" placeholder="Ej. 740588-100" title="Ingresa tu extensión SIP para activar el WebPhone flotante">
             </div>
 
             <button class="btn" id="btn-save-profile" onclick="saveProfile()" style="margin-top: 10px;">
@@ -856,7 +859,7 @@ tr:hover td { background: rgba(255,255,255,0.03); }
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
 <script>
-/* global firebase, Chart, MediaRecorder */
+/* global firebase, Chart, MediaRecorder, CryptoJS */
 
 // ==========================================
 // A. VARIABLES GLOBALES Y CONFIGURACIÓN
@@ -901,23 +904,65 @@ document.addEventListener('click', (e) => {
 });
 
 // ==========================================
-// ZADARMA WIDGET INIT
+// ZADARMA WIDGET INIT Y AUTENTICACIÓN DINÁMICA
 // ==========================================
-function initZadarmaWidget(sipExt) {
+
+// Función para obtener la clave temporal de Zadarma mediante su API
+async function getZadarmaWebrtcKey(sipExt) {
+    const zKey = '3697eed869b645cf491c'; // API Key Pública
+    const zSecret = 'ccbdd6b04447a2ad673a'; // API Secret
+    const method = '/v1/webrtc/get_key/';
+    const paramsStr = 'sip=' + encodeURIComponent(sipExt); // Ordenado alfabéticamente
+
+    // Firmar la solicitud usando HMAC-SHA1
+    const md5Params = CryptoJS.MD5(paramsStr).toString(CryptoJS.enc.Hex);
+    const dataToSign = method + paramsStr + md5Params;
+    
+    const hash = CryptoJS.HmacSHA1(dataToSign, zSecret);
+    const signature = CryptoJS.enc.Base64.stringify(hash);
+
+    /* NOTA: Las solicitudes fetch directas desde el navegador hacia api.zadarma.com 
+       pueden ser bloqueadas por reglas de CORS del servidor de Zadarma. 
+       En un entorno de producción estricto, esta función fetch se debe trasladar
+       a una Firebase Cloud Function. Para efectos de esta demostración cliente, se incluye aquí. */
+    const response = await fetch(`https://api.zadarma.com${method}?${paramsStr}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': zKey + ':' + signature
+        }
+    });
+
+    const data = await response.json();
+    if (data.status === 'success') {
+        return data.key;
+    } else {
+        throw new Error(data.message || 'Error obteniendo clave de Zadarma');
+    }
+}
+
+async function initZadarmaWidget(sipExt) {
   if (!sipExt) return;
-  if (window.zadarmaWidgetFn) {
-      // Clave proveniente de tu portal de Zadarma (image_18d13a.png)
-      zadarmaWidgetFn(
-          '3697eed869b645cf491c',
-          sipExt,
-          'rounded', /*square|rounded*/
-          'es', /*ru, en, es, fr, de, pl, ua*/
-          true,
-          {right:'10px',bottom:'5px'}
-      );
-      console.log("Zadarma widget inicializado para extensión: " + sipExt);
-  } else {
-      console.warn("Zadarma widget function not ready yet.");
+  try {
+      // 1. Obtener clave temporal (expira en 72 horas)
+      const webrtcKey = await getZadarmaWebrtcKey(sipExt);
+      
+      // 2. Inicializar Widget WebRTC
+      if (window.zadarmaWidgetFn) {
+          zadarmaWidgetFn(
+              webrtcKey,
+              sipExt,
+              'square', /*square|rounded*/
+              'es', /*ru, en, es, fr, de, pl, ua*/
+              true,
+              "{right:'10px',bottom:'5px'}"
+          );
+          console.log("Zadarma widget inicializado para extensión: " + sipExt);
+      } else {
+          console.warn("La librería del widget de Zadarma no ha cargado correctamente.");
+      }
+  } catch (error) {
+      console.error("Error iniciando Zadarma:", error);
+      showToast("Error conectando WebRTC. (Verifica si el CORS bloquea la petición o tu extensión)", "❌");
   }
 }
 
