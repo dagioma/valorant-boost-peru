@@ -11,13 +11,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<!-- LIBRERÍA DE ENCRIPTACIÓN PARA FIRMAR PETICIONES API DE ZADARMA -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
-<!-- SCRIPTS DE ZADARMA WEBRTC WIDGET (Versión 8) -->
-<script src="https://my.zadarma.com/webphoneWebRTCWidget/v8/js/loader-phone-lib.js?v=23"></script>
-<script src="https://my.zadarma.com/webphoneWebRTCWidget/v8/js/loader-phone-fn.js?v=23"></script>
-
 <style>
 /* =========================================
     1. VARIABLES DE COLOR (TEMA OSCURO SUAVE)
@@ -175,11 +168,6 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opaci
 /* =========================================
     7. DIALPAD, TABLAS, CHAT, EXTRAS
     ========================================= */
-.dialpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; max-width: 320px; margin-left: auto; margin-right: auto;}
-.dial-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: 12px; color: var(--text); font-size: 26px; font-weight: 700; padding: 18px 0; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-family: 'Inter', sans-serif;}
-.dial-btn:active { background: var(--p); transform: scale(0.92); border-color: var(--p); color: white;}
-.dial-btn:hover:not(:active) { background: rgba(255,255,255,0.08); }
-
 .tag { display: inline-flex; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
 .tag.purple { background: rgba(147,51,234,0.15); color: #d8b4fe; border: 1px solid rgba(147,51,234,0.3); }
 .tag.blue { background: rgba(37,99,235,0.15); color: #93c5fd; border: 1px solid rgba(37,99,235,0.3); }
@@ -299,9 +287,10 @@ tr:hover td { background: rgba(255,255,255,0.03); }
         <span>Dashboard</span>
       </div>
       
+      <!-- ITEM MODIFICADO - SE QUITÓ EL "NO FUNCIONA" -->
       <div class="nav-item" onclick="goto('calls',this)">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-        <span style="line-height: 1.2;">Central Llamadas<br><span style="font-size: 9px; color: var(--success); font-weight: 800; letter-spacing: 0.5px;">(WEBRTC)</span></span>
+        <span style="line-height: 1.2;">Central Llamadas</span>
       </div>
 
       <div class="nav-item" onclick="goto('recorder',this)">
@@ -348,6 +337,7 @@ tr:hover td { background: rgba(255,255,255,0.03); }
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-left: auto; opacity: 0.5;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
       </div>
 
+      <!-- SECCIÓN ADMIN OCULTA POR DEFECTO -->
       <div class="nav-section" id="nav-sec-admin" style="display:none; color: var(--danger);">Administración</div>
       <div class="nav-item" id="nav-item-admin" style="display:none;" onclick="goto('admin',this)">
         <svg fill="none" stroke="var(--danger)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -368,6 +358,7 @@ tr:hover td { background: rgba(255,255,255,0.03); }
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
         
+        <!-- BOTÓN DE ESTADO MANUAL (TOPBAR) -->
         <button id="top-status-btn" class="btn sm" style="background:var(--border2); color:white; border:none; display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700;" onclick="toggleStatusManual()">
           <span class="status-dot-offline"></span> Desconectado
         </button>
@@ -465,37 +456,29 @@ tr:hover td { background: rgba(255,255,255,0.03); }
               <input type="text" id="prof-name" class="inp" readonly style="opacity:0.7; cursor:not-allowed; border: 1px solid var(--border);" title="El nombre está vinculado a tu cuenta de inicio de sesión y no se puede modificar">
             </div>
 
-            <!-- CAMPO NUEVO: EXTENSIÓN SIP WEBRTC -->
-            <div style="width: 100%; margin-top: 5px;">
-              <label class="field-label" style="color: var(--p3);">Extensión SIP (Zadarma WebRTC)</label>
-              <input type="text" id="prof-sip" class="inp" placeholder="Ej. 740588-100" title="Ingresa tu extensión SIP para activar el WebPhone flotante">
-            </div>
-
-            <button class="btn" id="btn-save-profile" onclick="saveProfile()" style="margin-top: 10px;">
+            <button class="btn" id="btn-save-profile" onclick="saveProfile()">
               <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-              Guardar Perfil
+              Guardar Foto
             </button>
           </div>
         </div>
       </div>
 
-      <!-- VISTA CENTRAL DE LLAMADAS (WEBRTC READY CON GRABACION MIXTA DESACOPLADA) -->
+      <!-- VISTA CENTRAL DE LLAMADAS (WEBPHONE DE ZADARMA) -->
       <div class="view" id="v-calls">
         <div class="card" style="max-width: 850px; margin: 0 auto;">
           <div class="card-head" style="text-align:center; display: flex; align-items: center; justify-content: space-between;">
-             <span>Central de Llamadas y Tipificación</span>
-             <span style="font-size: 10px; background: rgba(16,185,129,0.2); color: var(--success); padding: 4px 8px; border-radius: 6px; letter-spacing: 0.5px;">WEBRTC ACTIVO</span>
+             <span>Central de Llamadas (Zadarma)</span>
+             <span style="font-size: 10px; background: rgba(16,185,129,0.2); color: var(--success); padding: 4px 8px; border-radius: 6px; letter-spacing: 0.5px;">EN LÍNEA</span>
           </div>
           <div class="card-body">
             
-            <div class="stats-row" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+            <div class="stats-row" style="grid-template-columns: 1fr 1fr; margin-bottom: 0; min-height: 400px;">
               
-              <!-- Dialer Info (Zadarma Flotante) -->
-              <div style="padding: 15px; border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-                 <svg fill="none" stroke="var(--success)" viewBox="0 0 24 24" style="width: 64px; height: 64px; margin-bottom: 16px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                 <h3 style="color: var(--text); font-weight: 800; margin-bottom: 8px;">WebPhone Activo</h3>
-                 <p style="font-size: 13px; color: var(--muted); line-height: 1.5;">Utiliza el <strong>widget flotante de Zadarma</strong> en la esquina inferior derecha para realizar y recibir llamadas con tu extensión SIP personal.</p>
-                 <p style="font-size: 12px; color: var(--warning); margin-top: 16px; background: rgba(245,158,11,0.1); padding: 10px; border-radius: 8px;">Si no ves el widget, asegúrate de configurar tu <strong>Extensión SIP</strong> en la sección "Mi Perfil".</p>
+              <!-- Dialer Panel (AQUÍ IRÁ EL WIDGET DE ZADARMA) -->
+              <div style="padding: 15px; border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center;" id="zadarma-container">
+                 <div id="zadarma-status-text" style="color: var(--muted); font-size: 14px;">Inicia turno para cargar el teléfono...</div>
+                 <!-- El widget de Zadarma se insertará en este contenedor -->
               </div>
 
               <!-- Typification Panel -->
@@ -506,61 +489,18 @@ tr:hover td { background: rgba(255,255,255,0.03); }
                    <option value="cliente_dudas">🤔 Cliente con dudas</option>
                    <option value="cliente_critico">🚨 Cliente crítico</option>
                  </select>
-
-                 <label class="field-label">Número Atendido (Referencia)</label>
-                 <input type="text" id="call-number" class="inp" placeholder="Ej. 999 999 999" style="margin-bottom: 15px;">
                  
                  <label class="field-label">Notas o Comentarios (Opcional)</label>
-                 <textarea id="call-notas" class="inp" placeholder="Escribe aquí algún detalle sobre la llamada..." style="height: 100px; resize:none; font-size: 14px; padding: 16px;"></textarea>
+                 <textarea id="call-notas" class="inp" placeholder="Escribe aquí algún detalle sobre la llamada..." style="height: 140px; resize:none; font-size: 14px; padding: 16px;"></textarea>
                  
+                  <button class="btn success" id="btn-call-save-all" onclick="saveTypificationOnly()" style="margin-top: 15px; padding: 12px 20px; font-weight: 800; font-size: 14px; width: 100%;">
+                    💾 Guardar Tipificación
+                  </button>
+
                  <div style="background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.2); color: var(--info); padding: 14px; border-radius: 8px; margin-top: 15px; font-size: 12px; font-weight: 600; line-height: 1.5;">
-                   <span style="font-weight: 800;">🎙️ Tip Grabación:</span> Al pulsar grabar, asegúrate de marcar la casilla <strong>"Compartir audio del sistema / Pestaña"</strong> en la ventanita emergente para capturar la voz del cliente.
+                   <span style="font-weight: 800;">ℹ️ Info:</span> Las llamadas se realizan directamente desde el panel izquierdo. Zadarma puede grabar las llamadas automáticamente si lo configuras en su panel.
                  </div>
               </div>
-
-            </div>
-
-            <!-- Panel de Grabación (Mic + PC) -->
-            <div style="border-top: 1px solid var(--border); padding-top: 24px; margin-top: 15px; background: rgba(0,0,0,0.15); border-radius: 0 0 var(--r2) var(--r2); padding: 24px;">
-               
-               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-                 
-                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                   <label class="field-label" style="margin: 0;">Grabar audio mixto (Tu voz + Cliente)</label>
-                   <div style="display: flex; gap: 10px; align-items: center;">
-                       <button class="btn danger sm" id="btn-call-rec-start" onclick="startCallRec()" title="Iniciar grabación">
-                         <svg fill="currentColor" viewBox="0 0 20 20" style="width:18px; height:18px;"><circle cx="10" cy="10" r="6"></circle></svg> Grabar
-                       </button>
-                       <button class="btn warning sm" id="btn-call-rec-pause" onclick="pauseCallRec()" style="background: rgba(245,158,11,0.15); color: var(--warning); border: 1px solid rgba(245,158,11,0.3);" disabled title="Pausar / Reanudar">
-                         <svg fill="currentColor" viewBox="0 0 20 20" style="width:18px; height:18px;"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg> Pausar
-                       </button>
-                       <button class="btn sm" id="btn-call-rec-stop" onclick="stopCallRec()" style="background:var(--border2); color:white;" disabled title="Detener grabación">
-                         <svg fill="currentColor" viewBox="0 0 20 20" style="width:18px; height:18px;"><rect x="6" y="6" width="8" height="8"></rect></svg> Detener
-                       </button>
-                       <span id="call-rec-time" style="font-family: monospace; font-size: 22px; font-weight: 800; margin-left: 10px; color: var(--text);">00:00</span>
-                   </div>
-                 </div>
-
-                 <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 250px;">
-                   <label class="field-label" style="margin: 0;">Acciones Finales</label>
-                   <div style="display: flex; flex-direction: column; gap: 10px;">
-                       <input type="text" id="call-rec-title" class="inp" placeholder="Nombre del Cliente / Audio..." style="padding: 14px 16px; font-size: 15px;">
-                       
-                       <div style="display: flex; gap: 10px;">
-                           <!-- Botón de descarga local de audio (Oculto inicialmente) -->
-                           <button class="btn sm" id="btn-download-audio" onclick="downloadLocalAudio()" style="display: none; background:var(--p2); color:white; flex-shrink: 0; padding: 12px 20px; font-weight: 800; font-size: 14px; flex: 1;">
-                             📥 Descargar Audio Local
-                           </button>
-
-                           <!-- Botón Guardar -->
-                           <button class="btn success sm" id="btn-call-save-all" onclick="saveCallAndTypification()" style="flex-shrink: 0; padding: 12px 20px; font-weight: 800; font-size: 14px; flex: 1;">
-                             💾 Guardar Tipificación
-                           </button>
-                       </div>
-                   </div>
-                 </div>
-
-               </div>
 
             </div>
 
@@ -857,21 +797,26 @@ tr:hover td { background: rgba(255,255,255,0.03); }
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
+
+<!-- Scripts de Zadarma -->
+<script src="https://my.zadarma.com/webphoneWebRTCWidget/v9/js/loader-phone-lib.js?sub_v=1"></script>
+<script src="https://my.zadarma.com/webphoneWebRTCWidget/v9/js/loader-phone-fn.js?sub_v=1"></script>
 
 <script>
-/* global firebase, Chart, MediaRecorder, CryptoJS */
+/* global firebase, Chart, MediaRecorder, zadarmaWidgetFn */
 
 // ==========================================
 // A. VARIABLES GLOBALES Y CONFIGURACIÓN
 // ==========================================
-var db, storage, auth;
+var db, storage, auth, functions;
 var CU = null, CUP = {}, histAll = [];
 var dailyChart = null; 
 var trendChart = null; 
 var currentAgents = []; 
 var heartbeatTimer = null; 
 
-var myProfile = { name: 'Cargando...', avatarUrl: '', sip: '' };
+var myProfile = { name: 'Cargando...', avatarUrl: '' };
 var allProfilesCache = {}; 
 var newAvatarFile = null;
 var currentChatMessages = []; 
@@ -891,6 +836,7 @@ try {
   db = firebase.firestore();
   storage = firebase.storage();
   auth = firebase.auth();
+  functions = firebase.app().functions('us-central1'); // Inicializa Cloud Functions
 } catch(e) { console.error(e); }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -902,69 +848,6 @@ document.addEventListener('click', (e) => {
     document.getElementById('emoji-picker').classList.remove('show');
   }
 });
-
-// ==========================================
-// ZADARMA WIDGET INIT Y AUTENTICACIÓN DINÁMICA
-// ==========================================
-
-// Función para obtener la clave temporal de Zadarma mediante su API
-async function getZadarmaWebrtcKey(sipExt) {
-    const zKey = '3697eed869b645cf491c'; // API Key Pública
-    const zSecret = 'ccbdd6b04447a2ad673a'; // API Secret
-    const method = '/v1/webrtc/get_key/';
-    const paramsStr = 'sip=' + encodeURIComponent(sipExt); // Ordenado alfabéticamente
-
-    // Firmar la solicitud usando HMAC-SHA1
-    const md5Params = CryptoJS.MD5(paramsStr).toString(CryptoJS.enc.Hex);
-    const dataToSign = method + paramsStr + md5Params;
-    
-    const hash = CryptoJS.HmacSHA1(dataToSign, zSecret);
-    const signature = CryptoJS.enc.Base64.stringify(hash);
-
-    /* NOTA: Las solicitudes fetch directas desde el navegador hacia api.zadarma.com 
-       pueden ser bloqueadas por reglas de CORS del servidor de Zadarma. 
-       En un entorno de producción estricto, esta función fetch se debe trasladar
-       a una Firebase Cloud Function. Para efectos de esta demostración cliente, se incluye aquí. */
-    const response = await fetch(`https://api.zadarma.com${method}?${paramsStr}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': zKey + ':' + signature
-        }
-    });
-
-    const data = await response.json();
-    if (data.status === 'success') {
-        return data.key;
-    } else {
-        throw new Error(data.message || 'Error obteniendo clave de Zadarma');
-    }
-}
-
-async function initZadarmaWidget(sipExt) {
-  if (!sipExt) return;
-  try {
-      // 1. Obtener clave temporal (expira en 72 horas)
-      const webrtcKey = await getZadarmaWebrtcKey(sipExt);
-      
-      // 2. Inicializar Widget WebRTC
-      if (window.zadarmaWidgetFn) {
-          zadarmaWidgetFn(
-              webrtcKey,
-              sipExt,
-              'square', /*square|rounded*/
-              'es', /*ru, en, es, fr, de, pl, ua*/
-              true,
-              "{right:'10px',bottom:'5px'}"
-          );
-          console.log("Zadarma widget inicializado para extensión: " + sipExt);
-      } else {
-          console.warn("La librería del widget de Zadarma no ha cargado correctamente.");
-      }
-  } catch (error) {
-      console.error("Error iniciando Zadarma:", error);
-      showToast("Error conectando WebRTC. (Verifica si el CORS bloquea la petición o tu extensión)", "❌");
-  }
-}
 
 // ==========================================
 // B. GUARDIÁN DE AUTENTICACIÓN
@@ -1003,8 +886,59 @@ auth.onAuthStateChanged(async (user) => {
 });
 
 // ==========================================
-// SISTEMA DE ESTADOS (ONLINE / OFFLINE / RECORDING)
+// SISTEMA DE ESTADOS E INTEGRACIÓN ZADARMA
 // ==========================================
+function getMySipId() {
+    if (!CUP || !CUP.name) return null;
+    const name = normalizeAgente(CUP.name);
+    
+    switch(name) {
+        case 'MARCO': return '576567-100';
+        case 'DANIELA': return '576567-101';
+        case 'MARIETTE': return '576567-102';
+        case 'ALEJANDRO': return '576567-103';
+        case 'FRANCO': return '576567-104';
+        default: return null; 
+    }
+}
+
+async function loadZadarmaPhone() {
+    const sipId = getMySipId();
+    const container = document.getElementById('zadarma-status-text');
+    
+    if (!sipId) {
+        if(container) container.textContent = "Error: No tienes una extensión SIP asignada en el sistema.";
+        return;
+    }
+
+    if(container) container.textContent = "Conectando con la centralita...";
+
+    try {
+        const getZadarmaKey = functions.httpsCallable('getZadarmaWebRTCKey');
+        const result = await getZadarmaKey({ sipId: sipId });
+        
+        if (result.data && result.data.status === 'success') {
+            const webrtcKey = result.data.key;
+            if(container) container.style.display = 'none';
+            
+            zadarmaWidgetFn(
+                webrtcKey, 
+                sipId, 
+                'rounded', 
+                'es', 
+                true, 
+                {left:'20px',bottom:'50px'} 
+            );
+            
+            showToast('Teléfono conectado exitosamente', '📞');
+        }
+    } catch (error) {
+        console.error("Error al cargar Zadarma:", error);
+        if(container) container.textContent = "Error al conectar con Zadarma.";
+        showToast('Error al conectar el teléfono', '❌');
+    }
+}
+
 function changeMyStatus(newStatus) {
   myCurrentStatus = newStatus;
   const overlay = document.getElementById('offline-overlay');
@@ -1018,6 +952,11 @@ function changeMyStatus(newStatus) {
     topBtn.style.color = 'white';
     topBtn.disabled = false;
     sbStatus.innerHTML = '<span class="status-dot-offline" style="margin-right:4px;"></span> Desconectado';
+    
+    // Si se desconecta, recargamos la página para destruir el widget 
+    if (window.zadarmaWidgetObj) {
+         window.location.reload(); 
+    }
   } else if(newStatus === 'online') {
     overlay.classList.remove('show');
     topBtn.innerHTML = '<span class="pulse-dot anim" style="margin-right:6px;"></span> Disponible (Detener)';
@@ -1025,14 +964,11 @@ function changeMyStatus(newStatus) {
     topBtn.style.color = 'var(--success)';
     topBtn.disabled = false;
     sbStatus.innerHTML = '<span class="pulse-dot anim" style="margin-right:4px;"></span> Disponible';
-  } else if(newStatus === 'recording') {
-    overlay.classList.remove('show');
-    topBtn.innerHTML = '<span class="pulse-dot-red" style="margin-right:6px;"></span> Grabando Contrato...';
-    topBtn.style.background = 'rgba(239,68,68,0.15)';
-    topBtn.style.color = 'var(--danger)';
-    topBtn.disabled = true; 
-    sbStatus.innerHTML = '<span class="pulse-dot-red" style="margin-right:4px;"></span> Grabando...';
-  }
+    
+    if (!window.zadarmaWidgetObj) { 
+        loadZadarmaPhone();
+    }
+  } 
   updatePresence(true); 
 }
 
@@ -1057,7 +993,7 @@ function updatePresence(force = false) {
 }
 
 // ==========================================
-// C. EDICIÓN DE PERFIL Y SIP
+// C. EDICIÓN DE PERFIL
 // ==========================================
 async function loadMyProfile(email, expectedName) {
   try {
@@ -1065,12 +1001,10 @@ async function loadMyProfile(email, expectedName) {
     if(doc.exists) {
       let data = doc.data();
       myProfile.avatarUrl = data.avatarUrl || '';
-      myProfile.sip = data.sip || '';
       if(data.name !== expectedName) await db.collection('perfiles').doc(CU.uid).set({ name: expectedName }, {merge: true});
     } else {
       myProfile.avatarUrl = '';
-      myProfile.sip = '';
-      await db.collection('perfiles').doc(CU.uid).set({ name: expectedName, avatarUrl: '', sip: '' });
+      await db.collection('perfiles').doc(CU.uid).set({ name: expectedName, avatarUrl: '' });
     }
     applyProfileToDOM();
   } catch(e) {}
@@ -1080,8 +1014,6 @@ function applyProfileToDOM() {
   document.getElementById('sb-name').textContent = myProfile.name;
   document.getElementById('wsp-asesor').value = myProfile.name;
   document.getElementById('prof-name').value = myProfile.name; 
-  document.getElementById('prof-sip').value = myProfile.sip || ''; 
-  
   const applyAv = (imgId, letId) => {
     const imgEl = document.getElementById(imgId);
     if(myProfile.avatarUrl) {
@@ -1100,12 +1032,6 @@ function applyProfileToDOM() {
   applyAv('sb-av-img', 'sb-av-letter');
   applyAv('top-av-img', 'top-av-letter');
   applyAv('prof-av-preview', 'prof-av-letter');
-
-  // Inicializar WebRTC si tiene SIP configurado
-  if(myProfile.sip && !window.zadarmaInitialized) {
-      initZadarmaWidget(myProfile.sip);
-      window.zadarmaInitialized = true;
-  }
 }
 
 function previewAvatar(event) {
@@ -1120,34 +1046,22 @@ function previewAvatar(event) {
 
 async function saveProfile() {
   const btn = document.getElementById('btn-save-profile');
-  
-  btn.disabled = true; btn.innerHTML = 'Guardando...';
-  
-  myProfile.sip = document.getElementById('prof-sip').value.trim();
-
+  if(!newAvatarFile) return showToast("No has seleccionado ninguna foto nueva", "⚠️");
+  btn.disabled = true; btn.innerHTML = 'Guardando Foto...';
   try {
-    if (newAvatarFile) {
-        let finalAvatarUrl = myProfile.avatarUrl;
-        const snap = await storage.ref(`avatars/${CU.uid}_${Date.now()}`).put(newAvatarFile);
-        finalAvatarUrl = await snap.ref.getDownloadURL();
-        myProfile.avatarUrl = finalAvatarUrl;
-        newAvatarFile = null;
-    }
+    let finalAvatarUrl = myProfile.avatarUrl;
+    const snap = await storage.ref(`avatars/${CU.uid}_${Date.now()}`).put(newAvatarFile);
+    finalAvatarUrl = await snap.ref.getDownloadURL();
+    myProfile.avatarUrl = finalAvatarUrl;
     await db.collection('perfiles').doc(CU.uid).set(myProfile, {merge: true});
     applyProfileToDOM();
-    showToast("Perfil y SIP actualizados correctamente", "✅");
-    
-    // Forzar inicio WebRTC si se acaba de agregar un SIP
-    if(myProfile.sip && !window.zadarmaInitialized) {
-        initZadarmaWidget(myProfile.sip);
-        window.zadarmaInitialized = true;
-    }
-
+    showToast("Foto actualizada correctamente", "✅");
+    newAvatarFile = null;
   } catch(e) {
-    showToast("Error al guardar perfil", "❌");
+    showToast("Error al guardar la foto", "❌");
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Guardar Perfil';
+    btn.innerHTML = '<svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Guardar Foto';
   }
 }
 
@@ -1201,7 +1115,7 @@ function goto(viewId, element) {
   
   const titles = {
     dashboard: { t:'Dashboard', s:'Resumen operativo' },
-    calls:     { t:'Central de Llamadas', s:'Gestión y tipificación (WebRTC)' },
+    calls:     { t:'Central de Llamadas', s:'Gestión y tipificación (Zadarma)' },
     recorder:  { t:'Grabadora', s:'Captura de audio libre' },
     wsp:       { t:'Mensaje WhatsApp', s:'Generador post-grabación' },
     history:   { t:'Audios del Mes', s:'Audios grabados del mes actual' },
@@ -1232,7 +1146,6 @@ async function startRec() {
     recMR.start(); recIsOn=true; recPaused=false; recSec=0;
     recTimer = setInterval(()=>{ recSec++; document.getElementById('rec-time').textContent=fmtTime(recSec); },1000);
     setRecUI('recording');
-    changeMyStatus('recording');
   } catch(e) { showToast('No se pudo acceder al micrófono','❌'); }
 }
 
@@ -1247,7 +1160,6 @@ function stopRec() {
   recMR.stop(); recMR.stream.getTracks().forEach(t=>t.stop());
   clearInterval(recTimer); recDur=document.getElementById('rec-time').textContent;
   recIsOn=false; recPaused=false; setRecUI('ready');
-  changeMyStatus('online');
 }
 
 function setRecUI(st) {
@@ -1281,7 +1193,6 @@ async function saveRec() {
 
   try {
     showToast('Subiendo a la nube…','☁️');
-    
     const blob2 = recBlob;
     document.getElementById('btn-rec-save').disabled=true;
     document.getElementById('rec-title').value='';
@@ -1300,213 +1211,34 @@ async function saveRec() {
 
 
 // ==========================================
-// E.2 GRABACIÓN MIXTA (DESACOPLADA)
+// E.2 CENTRAL DE LLAMADAS Y TIPIFICACIÓN
 // ==========================================
-
-var callRecMR=null, callRecChunks=[], callRecIsOn=false, callRecPaused=false, callSec=0, callRecTimer=null, callRecBlob=null;
-var callSysStream = null;
-var callMicStream = null;
-
-async function startCallRec() {
-    try {
-        showToast('Selecciona tu pestaña actual y MARCA "Compartir audio de pestaña"', '🖥️');
-        
-        callSysStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-        callMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-        const audioCtxMixer = new (window.AudioContext || window.webkitAudioContext)();
-        const dest = audioCtxMixer.createMediaStreamDestination();
-
-        if (callSysStream.getAudioTracks().length > 0) {
-            const sysSource = audioCtxMixer.createMediaStreamSource(new MediaStream([callSysStream.getAudioTracks()[0]]));
-            sysSource.connect(dest);
-        } else {
-            showToast('⚠️ No seleccionaste compartir audio del sistema.', '⚠️');
-        }
-
-        if (callMicStream.getAudioTracks().length > 0) {
-            const micSource = audioCtxMixer.createMediaStreamSource(callMicStream);
-            micSource.connect(dest);
-        }
-
-        callRecMR = new MediaRecorder(dest.stream); 
-        callRecChunks = [];
-        callRecMR.ondataavailable = e => callRecChunks.push(e.data);
-        
-        callRecMR.start(); 
-        callRecIsOn = true; 
-        callRecPaused = false;
-        callSec = 0;
-        changeMyStatus('recording');
-        
-        callRecTimer = setInterval(()=>{ 
-          callSec++; 
-          document.getElementById('call-rec-time').textContent=fmtTime(callSec); 
-          document.getElementById('call-rec-time').style.color = 'var(--danger)';
-        }, 1000);
-        
-        document.getElementById('btn-call-rec-start').disabled = true;
-        document.getElementById('btn-call-rec-pause').disabled = false;
-        document.getElementById('btn-call-rec-stop').disabled = false;
-        
-        document.getElementById('btn-download-audio').style.display = 'none';
-        
-        showToast('Grabación Mixta Iniciada', '⏺');
-    } catch(e) { 
-        console.error(e);
-        showToast('Cancelado o Error al capturar audio', '❌'); 
-    }
-}
-
-function pauseCallRec() {
-    if(!callRecIsOn) return;
-    if(callRecPaused) {
-        callRecMR.resume();
-        callRecPaused = false;
-        callRecTimer = setInterval(()=>{ callSec++; document.getElementById('call-rec-time').textContent=fmtTime(callSec); }, 1000);
-        
-        document.getElementById('btn-call-rec-pause').innerHTML = '<svg fill="currentColor" viewBox="0 0 20 20" style="width:18px; height:18px;"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg> Pausar';
-        document.getElementById('call-rec-time').style.color = 'var(--danger)';
-        showToast('Grabación reanudada', '▶️');
-    } else {
-        callRecMR.pause();
-        callRecPaused = true;
-        clearInterval(callRecTimer);
-        
-        document.getElementById('btn-call-rec-pause').innerHTML = '<svg fill="currentColor" viewBox="0 0 20 20" style="width:18px; height:18px;"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg> Reanudar';
-        document.getElementById('call-rec-time').style.color = 'var(--warning)';
-        showToast('Grabación pausada', '⏸️');
-    }
-}
-
-function stopCallRecPromise() {
-    return new Promise((resolve) => {
-        if(!callRecIsOn) { resolve(); return; }
-        callRecMR.onstop = () => {
-            callRecBlob = new Blob(callRecChunks, {type:'audio/webm'});
-            if(callSysStream) callSysStream.getTracks().forEach(t=>t.stop());
-            if(callMicStream) callMicStream.getTracks().forEach(t=>t.stop());
-            
-            clearInterval(callRecTimer);
-            callRecIsOn = false; callRecPaused = false;
-            
-            document.getElementById('call-rec-time').style.color = 'var(--text)';
-            document.getElementById('btn-call-rec-pause').disabled = true;
-            document.getElementById('btn-call-rec-pause').innerHTML = '<svg fill="currentColor" viewBox="0 0 20 20" style="width:18px; height:18px;"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg> Pausar';
-            document.getElementById('btn-call-rec-stop').disabled = true;
-            document.getElementById('btn-call-rec-start').disabled = false;
-            
-            document.getElementById('btn-download-audio').style.display = 'block';
-            
-            changeMyStatus('online');
-            resolve();
-        };
-        callRecMR.stop();
-    });
-}
-
-async function stopCallRec() {
-    await stopCallRecPromise();
-    showToast('Grabación detenida. Ya puedes descargar el audio.', '⏹');
-}
-
-async function downloadLocalAudio() {
-    if (!callRecBlob) return showToast('No hay audio para descargar', '⚠️');
-    
-    const tipo = document.getElementById('call-tipo').value;
-    let audioName = document.getElementById('call-rec-title').value.trim() || 'Llamada_'+tipo+'_'+Date.now();
-    const fname = `${audioName}.webm`;
-    
-    try {
-        if (window.showSaveFilePicker) {
-            const fileHandle = await window.showSaveFilePicker({
-                suggestedName: fname,
-                types: [{ description: 'Audio WebM', accept: { 'audio/webm': ['.webm'] } }]
-            });
-            const writable = await fileHandle.createWritable();
-            await writable.write(callRecBlob);
-            await writable.close();
-            showToast('Audio descargado exitosamente.', '✅');
-        } else {
-            const u = URL.createObjectURL(callRecBlob);
-            const a = document.createElement('a'); a.href = u; a.download = fname; 
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            showToast('Descarga iniciada.', '✅');
-        }
-    } catch(err) {
-        console.log("Guardado local cancelado o fallido: ", err);
-    }
-}
-
-async function saveCallAndTypification() {
-    document.getElementById('btn-call-save-all').disabled = true;
-    document.getElementById('btn-call-save-all').textContent = 'Subiendo...';
-
-    if (callRecIsOn) {
-        showToast('Deteniendo grabación automáticamente...', '⏳');
-        await stopCallRecPromise();
-    }
-
-    const num = document.getElementById('call-number').value.trim() || 'Sin número';
+async function saveTypificationOnly() {
     const tipo = document.getElementById('call-tipo').value;
     const notas = document.getElementById('call-notas').value.trim();
-    let audioName = document.getElementById('call-rec-title').value.trim() || 'Llamada_'+tipo+'_'+Date.now();
-    let audioUrl = '';
+    
+    const btn = document.getElementById('btn-call-save-all');
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
 
     try {
-        showToast('Subiendo información a la nube...', '☁️');
-        
-        if (callRecBlob) {
-            const fname = `${audioName}.webm`;
-            const snap = await storage.ref(`llamadas_audios/${fname}`).put(callRecBlob);
-            audioUrl = await snap.ref.getDownloadURL();
-            
-            await db.collection('historial_llamadas').add({
-              fecha: getDateStr(), 
-              nombre: audioName, 
-              duracion: document.getElementById('call-rec-time').textContent, 
-              agente: (CUP && CUP.name) ? CUP.name : 'Agente', 
-              audioUrl: audioUrl, 
-              timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
-
         await db.collection('tipificaciones_llamadas').add({
             fecha: getDateStr(),
             agente: (CUP && CUP.name) ? CUP.name : 'Agente',
-            cliente_audio: audioName,
-            numero: num,
             tipificacion: tipo,
             notas: notas,
-            audioUrl: audioUrl,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        showToast('Tipificación y datos guardados', '✅');
+        showToast('Tipificación guardada', '✅');
+        document.getElementById('call-notas').value = '';
         
     } catch(e) {
         console.error("Error en Firebase:", e); 
-        showToast('Error al guardar en la nube (Revisa consola F12)', '⚠️');
+        showToast('Error al guardar', '⚠️');
     } finally {
-        document.getElementById('call-number').value = '';
-        document.getElementById('call-notas').value = '';
-        document.getElementById('call-rec-title').value = '';
-        document.getElementById('call-rec-time').textContent = '00:00';
-        document.getElementById('call-rec-time').style.color = 'var(--text)';
-        document.getElementById('call-tipo').selectedIndex = 0;
-        
-        document.getElementById('btn-call-rec-start').disabled = false;
-        document.getElementById('btn-call-rec-pause').disabled = true;
-        document.getElementById('btn-call-rec-stop').disabled = true;
-        
-        document.getElementById('btn-download-audio').style.display = 'none';
-        document.getElementById('btn-call-save-all').textContent = '💾 Guardar Tipificación';
-        document.getElementById('btn-call-save-all').disabled = false;
-
-        callRecBlob = null;
-        callSec = 0;
-        callRecIsOn = false;
-        callRecPaused = false;
+        btn.disabled = false;
+        btn.textContent = '💾 Guardar Tipificación';
     }
 }
 
@@ -1527,12 +1259,11 @@ async function exportCallsCSV() {
         });
 
         let csv = '\uFEFF'; 
-        csv += 'Fecha,Agente,Cliente/Audio,Numero,Tipificacion,Notas,Link_Audio\n';
+        csv += 'Fecha,Agente,Tipificacion,Notas\n';
         
         dataArr.forEach(d => {
             const notasLimpias = d.notas ? d.notas.replace(/,/g, ';').replace(/\n/g, ' ') : '';
-            const clienteLimpio = d.cliente_audio ? d.cliente_audio.replace(/,/g, ';') : '';
-            csv += `${d.fecha || ''},${d.agente || ''},${clienteLimpio},${d.numero || ''},${d.tipificacion || ''},${notasLimpias},${d.audioUrl || 'Sin audio'}\n`;
+            csv += `${d.fecha || ''},${d.agente || ''},${d.tipificacion || ''},${notasLimpias}\n`;
         });
 
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
