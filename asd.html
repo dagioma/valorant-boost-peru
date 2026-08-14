@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teléfono - Llamadas WebRTC</title>
+    
+    <!-- LIBRERÍA DE ENCRIPTACIÓN PARA FIRMAR PETICIONES API DE ZADARMA -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <!-- SCRIPTS DE ZADARMA WEBRTC WIDGET -->
+    <script src="https://my.zadarma.com/webphoneWebRTCWidget/v8/js/loader-phone-lib.js?v=23"></script>
+    <script src="https://my.zadarma.com/webphoneWebRTCWidget/v8/js/loader-phone-fn.js?v=23"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .telefono {
+            background-color: #2c2c2c;
+            padding: 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 320px;
+            position: relative;
+        }
+
+        /* Contenedor de configuración SIP */
+        .config-sip {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #3a3a3a;
+            padding: 10px;
+            border-radius: 15px;
+        }
+
+        .config-sip input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            background: #2c2c2c;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .config-sip button {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            background: #3b82f6;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .config-sip button:hover {
+            background: #2563eb;
+        }
+
+        .pantalla {
+            background-color: #3a3a3a;
+            color: white;
+            font-size: 28px;
+            padding: 20px;
+            text-align: right;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            word-break: break-all;
+        }
+
+        .botones {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .boton {
+            background-color: #4a4a4a;
+            color: white;
+            border: none;
+            font-size: 24px;
+            padding: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            height: 70px;
+            width: 70px;
+            margin: 0 auto;
+        }
+
+        .boton:hover {
+            background-color: #666;
+            transform: scale(1.05);
+        }
+
+        .boton:active {
+            transform: scale(0.95);
+        }
+
+        .boton.llamar {
+            background-color: #28c744;
+            font-size: 22px;
+        }
+
+        .boton.llamar:hover {
+            background-color: #2ed94c;
+        }
+
+        .boton.colgar {
+            background-color: #e53935;
+            font-size: 22px;
+        }
+
+        .boton.colgar:hover {
+            background-color: #ff433e;
+        }
+
+        .boton.borrar {
+            background-color: #555;
+            font-size: 20px;
+        }
+
+        .fila-accion {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="telefono">
+        
+        <!-- Configuración de Extensión Zadarma -->
+        <div class="config-sip">
+            <input type="text" id="sip-input" placeholder="Tu SIP Zadarma (Ej. 740588-100)">
+            <button onclick="conectarZadarma()" id="btn-conectar">Conectar</button>
+        </div>
+
+        <!-- Pantalla donde se ve el número -->
+        <div class="pantalla" id="pantalla"></div>
+
+        <!-- Teclado numérico -->
+        <div class="botones">
+            <button class="boton" onclick="agregarNumero('1')">1</button>
+            <button class="boton" onclick="agregarNumero('2')">2</button>
+            <button class="boton" onclick="agregarNumero('3')">3</button>
+
+            <button class="boton" onclick="agregarNumero('4')">4</button>
+            <button class="boton" onclick="agregarNumero('5')">5</button>
+            <button class="boton" onclick="agregarNumero('6')">6</button>
+
+            <button class="boton" onclick="agregarNumero('7')">7</button>
+            <button class="boton" onclick="agregarNumero('8')">8</button>
+            <button class="boton" onclick="agregarNumero('9')">9</button>
+
+            <button class="boton" onclick="agregarNumero('*')">*</button>
+            <button class="boton" onclick="agregarNumero('0')">0</button>
+            <button class="boton" onclick="agregarNumero('#')">#</button>
+        </div>
+
+        <!-- Botones de llamar, borrar y colgar -->
+        <div class="fila-accion">
+            <button class="boton borrar" onclick="borrarUltimo()">⌫</button>
+            <button class="boton llamar" onclick="realizarLlamada()">📞</button>
+            <button class="boton colgar" onclick="colgar()">📵</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. LÓGICA DE ZADARMA WEBRTC
+        // ==========================================
+        const zKey = '3697eed869b645cf491c'; // API Key Zadarma
+        const zSecret = 'ccbdd6b04447a2ad673a'; // API Secret Zadarma
+
+        async function getZadarmaWebrtcKey(sipExt) {
+            const method = '/v1/webrtc/get_key/';
+            const paramsStr = 'sip=' + encodeURIComponent(sipExt);
+
+            // Generar la firma HMAC-SHA1
+            const md5Params = CryptoJS.MD5(paramsStr).toString(CryptoJS.enc.Hex);
+            const dataToSign = method + paramsStr + md5Params;
+            const hash = CryptoJS.HmacSHA1(dataToSign, zSecret);
+            const signature = CryptoJS.enc.Base64.stringify(hash);
+
+            // Fetch a la API de Zadarma
+            const response = await fetch(`https://api.zadarma.com${method}?${paramsStr}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': zKey + ':' + signature
+                }
+            });
+
+            const data = await response.json();
+            if (data.status === 'success') {
+                return data.key;
+            } else {
+                throw new Error(data.message || 'Error obteniendo clave');
+            }
+        }
+
+        async function conectarZadarma() {
+            const sipExt = document.getElementById('sip-input').value.trim();
+            const btn = document.getElementById('btn-conectar');
+
+            if (!sipExt) {
+                alert('Por favor, ingresa tu extensión SIP.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '...';
+
+            try {
+                const webrtcKey = await getZadarmaWebrtcKey(sipExt);
+                
+                if (window.zadarmaWidgetFn) {
+                    zadarmaWidgetFn(
+                        webrtcKey,
+                        sipExt,
+                        'square', // Estilo square como lo solicitaste
+                        'es', // Idioma español
+                        true,
+                        "{right:'10px',bottom:'5px'}" // Posición en pantalla
+                    );
+                    btn.textContent = 'Activo';
+                    btn.style.backgroundColor = '#10b981'; // Verde de éxito
+                    alert('Conectado a Zadarma. Utiliza el widget flotante inferior derecho para realizar las llamadas IP.');
+                } else {
+                    alert('Los scripts del widget de Zadarma no han cargado correctamente.');
+                    btn.disabled = false;
+                    btn.textContent = 'Conectar';
+                }
+            } catch (error) {
+                console.error("Error Zadarma:", error);
+                alert("Error al conectar: " + error.message + " (Revisa si CORS bloquea la petición en navegador)");
+                btn.disabled = false;
+                btn.textContent = 'Conectar';
+            }
+        }
+
+        // ==========================================
+        // 2. LÓGICA DEL TECLADO VISUAL
+        // ==========================================
+        const pantalla = document.getElementById('pantalla');
+
+        function agregarNumero(num) {
+            pantalla.textContent += num;
+        }
+
+        function borrarUltimo() {
+            pantalla.textContent = pantalla.textContent.slice(0, -1);
+        }
+
+        function realizarLlamada() {
+            const numero = pantalla.textContent.trim();
+            if (numero) {
+                // El botón activa la app nativa como respaldo. 
+                // Las llamadas WebRTC se hacen desde el widget de Zadarma.
+                alert(`Para llamadas IP utiliza el widget de Zadarma.\n\nAbriendo marcador nativo para: ${numero}`);
+                window.location.href = `tel:${numero}`;
+            } else {
+                alert('Escribe un número primero');
+            }
+        }
+
+        function colgar() {
+            pantalla.textContent = '';
+        }
+    </script>
+</body>
+</html>
